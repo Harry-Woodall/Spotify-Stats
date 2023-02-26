@@ -8,3 +8,26 @@
 // @use 'vuetify' with (
 //   $color-pack: false
 // );
+
+html {
+  overflow-y: auto !important;
+}
+
+body {
+  background: rgb(25, 15, 205);
+  background: linear-gradient(25deg, rgba(25, 15, 205, 1) 0%, rgba(103, 51, 234, 1) 55%, rgb(190, 57, 192) 100%);
+
+  background-attachment: fixed;
+}
+
+.v-app-bar.v-toolbar {
+  background: transparent;
+}
+
+.v-theme--light {
+  --v-theme-background: transparent;
+}
+
+.v-card {
+  background: transparent;
+}
