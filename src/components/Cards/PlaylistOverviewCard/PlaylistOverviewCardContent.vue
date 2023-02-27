@@ -8,8 +8,6 @@ const props = defineProps({
   playlistData: { type: Object as PropType<PlaylistOverview>, required: true },
 });
 
-// ImagesLoaded(`.${props.playlistData.id}-card-image`, () => {});
-
 onMounted(() => {
   new Masonry(".card-grid", {
     columnWidth: ".playlist-card",
