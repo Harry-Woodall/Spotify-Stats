@@ -1,6 +1,6 @@
 // Composables
 import { createRouter, createWebHashHistory } from "vue-router";
-import localStorageEnums from "@/enums/localStorageEnums";
+import localStorageEnums from "@/enums/LocalStorageEnums";
 
 const routes = [
   {
@@ -26,6 +26,17 @@ const routes = [
     ],
   },
   {
+    path: "/playlist",
+    component: () => import("@/layouts/default/PlaylistLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "Playlist",
+        component: () => import("@/views/Playlist.vue"),
+      },
+    ],
+  },
+  {
     path: "/:token(access_token.*)",
     redirect: (to: any) => ({
       path: "/home",
@@ -39,9 +50,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to) => {
-  console.log(to);
-
+router.beforeEach(async (to) => {
   if (
     Object.keys(to.query).includes("accessToken") &&
     Object.keys(to.query).includes("refreshToken")
@@ -58,7 +67,7 @@ router.beforeEach((to) => {
         to.query["refreshToken"]
       );
 
-    router.push("home");
+    router.push("home?");
   }
 
   return true;

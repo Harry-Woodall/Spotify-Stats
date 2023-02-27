@@ -1,13 +1,13 @@
 import Gateway from "@/lib/gateway";
-import localStorageEnums from "@/enums/localStorageEnums";
+import localStorageEnums from "@/enums/LocalStorageEnums";
+import StorageHelpers from "@/helpers/StorageHelper";
+
+const token = StorageHelpers.GetAccessToken();
 
 const Api = {
   async verifyToken() {
-    const token = localStorage.getItem(localStorageEnums.ACCESS_TOKEN);
-
     if (token) {
-      const res = await Gateway.getAsync(token, "/access/verify");
-      console.log(res);
+      const res = await Gateway.getAsync(token, "/api/verify");
       return res;
     } else {
       return false;
@@ -21,8 +21,29 @@ const Api = {
     // const me = await Gateway.getAsync(AccessTokenInstance.getToken(), "/me");
     // console.log(me);
   },
-  async getTopArtists() {},
-  async getTopTracks() {},
-  async getPlaylists() {},
+  async getPlaylistDetails() {
+    if (token) {
+      const response = await Gateway.getAsync(token, "/api/playlists/details");
+      return response;
+    }
+  },
+  async getPlaylistOverview(playlistId: string) {
+    if (token) {
+      const response = await Gateway.getAsync(
+        token,
+        "/api/playlists/overview",
+        [{ key: "id", value: playlistId }]
+      );
+      return response;
+    }
+  },
+  async getPlaylistData(playlistId: string) {
+    if (token) {
+      const response = await Gateway.getAsync(token, `/api/playlists`, [
+        { key: "id", value: playlistId },
+      ]);
+      return response;
+    }
+  },
 };
 export default Api;
