@@ -97,6 +97,14 @@ onBeforeMount(async () => {
             />
           </v-card-item>
         </v-card>
+        <div v-else>
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="purple"
+            indeterminate
+          ></v-progress-circular>
+        </div>
       </div>
     </v-responsive>
   </v-container>

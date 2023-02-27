@@ -1,6 +1,6 @@
-<script setup>
-import { onUpdated, onMounted, reactive } from "vue";
-import Helpers from "@/helpers/componentHelper.ts";
+<script lang="ts" setup>
+import { onUpdated, onMounted, PropType } from "vue";
+import Helpers from "@/helpers/componentHelper";
 
 const props = defineProps({
   ammount: {
@@ -11,7 +11,7 @@ const props = defineProps({
     required: true,
     type: String,
   },
-  range: Array,
+  range: Array as PropType<number[]>,
   label: String,
 });
 
@@ -45,9 +45,9 @@ onMounted(() => {
           progressEnd = true;
         }
 
-        segmentInner.style = `width: ${width || 100}%`;
+        segmentInner.setAttribute("style", `width: ${width || 100}%`);
 
-        segment.appendChild(segmentInner);
+        segment!.appendChild(segmentInner);
       }
     }
   }

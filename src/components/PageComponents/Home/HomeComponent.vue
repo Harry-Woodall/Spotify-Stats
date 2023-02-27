@@ -26,8 +26,8 @@ onMounted(async () => {
 
 <template>
   <v-container class="fill-height">
-    <v-responsive class="d-flex align-center fill-height">
-      <h1>Playlists</h1>
+    <v-responsive class="d-flex fill-height">
+      <h1>My Playlists</h1>
       <v-divider class="my-5"></v-divider>
       <PlaylistCardContainer
         :itemCount="playlistData.itemCount"

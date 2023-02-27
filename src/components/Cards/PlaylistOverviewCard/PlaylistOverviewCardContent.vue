@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { PlaylistOverview } from "@/interfaces/playlistCardInterfaces";
-import { PropType } from "vue";
+import { onMounted, PropType } from "vue";
 import ImagesLoaded from "imagesloaded";
 import Masonry from "masonry-layout";
 
@@ -8,7 +8,9 @@ const props = defineProps({
   playlistData: { type: Object as PropType<PlaylistOverview>, required: true },
 });
 
-ImagesLoaded(`${props.playlistData.id}-card-image`, () => {
+// ImagesLoaded(`.${props.playlistData.id}-card-image`, () => {});
+
+onMounted(() => {
   new Masonry(".card-grid", {
     columnWidth: ".playlist-card",
     fitWidth: true,
@@ -17,7 +19,12 @@ ImagesLoaded(`${props.playlistData.id}-card-image`, () => {
 </script>
 
 <template>
-  <v-card width="300" class="playlist-card rounded-lg ma-2" elevation="6">
+  <v-card
+    width="300"
+    class="playlist-card rounded-lg ma-2"
+    elevation="6"
+    :to="'/playlist?id=' + props.playlistData.id"
+  >
     <v-img
       :id="props.playlistData.id + '-card-image'"
       class="align-end text-white playlist-card-image"
