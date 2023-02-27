@@ -1,1 +1,0 @@
-import{V as a,_ as e}from"./VApp.d6b8fbf3.js";import{d as t,c as o,w as r,o as s,a as p}from"./index.eb7c121a.js";import"./tag.e938adcf.js";import"./resizeObserver.30c914fc.js";const u=t({__name:"Splash",setup(_){return(c,n)=>(s(),o(a,null,{default:r(()=>[p(e)]),_:1}))}});export{u as default};
