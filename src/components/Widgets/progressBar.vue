@@ -13,6 +13,7 @@ const props = defineProps({
   },
   range: Array as PropType<number[]>,
   label: String,
+  icon: String,
 });
 
 onMounted(() => {
@@ -56,9 +57,13 @@ onMounted(() => {
 
 <template>
   <div class="progress-bar-container">
-    <label class="progress-bar-label text-caption" v-if="label">{{
-      label
-    }}</label>
+    <label
+      class="progress-bar-label text-subtitle-1 font-weight-bold"
+      v-if="label"
+    >
+      <v-icon v-if="icon" :icon="icon" size="large" start />
+      {{ label }}</label
+    >
     <div class="progress-bar-segment-container" :id="id">
       <div class="progress-bar-segment" :id="id + '-segment-0'"></div>
       <div class="progress-bar-segment" :id="id + '-segment-1'"></div>

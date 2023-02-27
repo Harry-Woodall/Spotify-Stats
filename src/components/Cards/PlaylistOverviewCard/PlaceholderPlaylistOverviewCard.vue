@@ -1,5 +1,14 @@
 <script lang="ts" setup>
 import AnimatedPlaceholder from "@/components/Support/AnimatedPlaceholder.vue";
+import Masonry from "masonry-layout";
+import { onMounted } from "vue";
+
+onMounted(() => {
+  new Masonry(".card-grid", {
+    columnWidth: ".playlist-card",
+    fitWidth: true,
+  });
+});
 </script>
 
 <template>

@@ -38,7 +38,7 @@ onBeforeMount(async () => {
           max-width="500px"
           width="100%"
           class="playlist-card rounded-lg ma-2"
-          elevation="6"
+          elevation="4"
         >
           <v-img width="100%" :src="playlistData.image || imageUrl" cover>
           </v-img>
@@ -48,53 +48,75 @@ onBeforeMount(async () => {
               max-width="100%"
               >{{ playlistData.title }}</v-card-title
             >
-            <v-card-subtitle class="font-weight-light"
-              >{{ playlistData.trackCount }} Tracks</v-card-subtitle
+            <v-card-subtitle class="font-weight-light text-body-1"
+              ><span class="font-weight-bold">{{
+                playlistData.trackCount
+              }}</span>
+              Tracks</v-card-subtitle
             >
           </v-col>
 
           <v-card-text>
-            <div class="font-weight-light">
-              Average Tempo: {{ Math.round(playlistData.analysis!.tempo) }}
+            <div class="font-weight-light text-h6">
+              Average Tempo:
+              <span class="font-weight-bold">{{
+                Math.round(playlistData.analysis!.tempo)
+              }}</span>
             </div>
 
-            <div class="font-weight-light">
+            <div class="font-weight-light text-h6">
               Average Duration:
-              {{ Math.floor(playlistData.analysis!.duration / 1000 / 60) }}:{{
-                (
-                  "0" +
-                  Math.round(
-                    ((playlistData.analysis!.duration / 1000 / 60) % 1) * 60
-                  )
-                ).slice(-2)
-              }}
+              <span class="font-weight-bold"
+                >{{
+                  Math.floor(playlistData.analysis!.duration / 1000 / 60)
+                }}:{{
+                  (
+                    "0" +
+                    Math.round(
+                      ((playlistData.analysis!.duration / 1000 / 60) % 1) * 60
+                    )
+                  ).slice(-2)
+                }}</span
+              >
             </div>
           </v-card-text>
           <v-card-item>
-            <ProgressBar
-              :ammount="playlistData.analysis!.energy"
-              :id="playlistData.title + '-energy'"
-              label="Energy"
-              :range="[0, 1]"
-            />
-            <ProgressBar
-              :ammount="playlistData.analysis!.danceability"
-              :id="playlistData.title + '-dancability'"
-              label="Dancibility"
-              :range="[0, 1]"
-            />
-            <ProgressBar
-              :ammount="playlistData.analysis!.instrumentalness"
-              :id="playlistData.title + '-vocals'"
-              label="Vocals"
-              :range="[1, 0]"
-            />
-            <ProgressBar
-              :ammount="playlistData.analysis!.valence"
-              :id="playlistData.title + '-happiness'"
-              label="Happiness"
-              :range="[0, 1]"
-            />
+            <div class="mb-5">
+              <ProgressBar
+                :ammount="playlistData.analysis!.energy"
+                :id="playlistData.title + '-energy'"
+                label="Energy"
+                :range="[0, 1]"
+                icon="mdi-lightning-bolt"
+              />
+            </div>
+            <div class="mb-5">
+              <ProgressBar
+                :ammount="playlistData.analysis!.danceability"
+                :id="playlistData.title + '-dancability'"
+                label="Dancibility"
+                :range="[0, 1]"
+                icon="mdi-human-female-dance"
+              />
+            </div>
+            <div class="mb-5">
+              <ProgressBar
+                :ammount="playlistData.analysis!.instrumentalness"
+                :id="playlistData.title + '-vocals'"
+                label="Vocals"
+                :range="[1, 0]"
+                icon="mdi-microphone"
+              />
+            </div>
+            <div class="mb-5">
+              <ProgressBar
+                :ammount="playlistData.analysis!.valence"
+                :id="playlistData.title + '-happiness'"
+                label="Happiness"
+                :range="[0, 1]"
+                icon="mdi-emoticon-happy"
+              />
+            </div>
           </v-card-item>
         </v-card>
         <div v-else>
