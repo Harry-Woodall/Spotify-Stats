@@ -1,0 +1,1 @@
+import{V as a,_ as e}from"./VApp.7320920d.js";import{d as t,e as o,c as r,w as s,o as c,a as n}from"./index.d1e14b1d.js";import"./tag.55b0ca8e.js";import"./resizeObserver.a16adfdb.js";const d=t({__name:"Main",setup(p){return o({value:!1}),(_,i)=>(c(),r(a,null,{default:s(()=>[n(e)]),_:1}))}});export{d as default};
