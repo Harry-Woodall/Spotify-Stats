@@ -4,27 +4,31 @@ import { useRouter } from "vue-router";
 import { PlaylistData } from "@/interfaces/playlistCardInterfaces";
 import ProgressBar from "@/components/Widgets/progressBar.vue";
 import Api from "@/lib/api";
+import RouterHelper from "@/helpers/RouterHelper";
+import ErrorHelper from "@/helpers/ErrorHelper";
 
 const router = useRouter();
 
 const playlistData = ref<PlaylistData>({});
 const Id = ref("");
 
-const imageUrl =
-  "https://mosaic.scdn.co/640/ab67616d0000b27309e9e2c7d79521350bd3c7ccab67616d0000b27318913da3b1abd70e45ea4771ab67616d0000b27394025aa54be4980ff1401169ab67616d0000b273a6adf25b511eabdcbfd87339";
-
 onBeforeMount(async () => {
   const query = router.currentRoute.value.query;
   Id.value = query.id as string;
 
   if (query.id) {
-    const response = await Api.getPlaylistData(query.id as string);
-    console.log(response);
-    playlistData.value.id = response.id;
-    playlistData.value.title = response.name;
-    playlistData.value.image = response.images[0].url;
-    playlistData.value.trackCount = response.trackCount;
-    playlistData.value.analysis = response.analysis;
+    try {
+      const response = await Api.getPlaylistData(query.id as string);
+
+      playlistData.value.id = response.id;
+      playlistData.value.title = response.name;
+      playlistData.value.image = response.images[0].url;
+      playlistData.value.trackCount = response.trackCount;
+      playlistData.value.analysis = response.analysis;
+    } catch (error) {
+      if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response);
+      else router.push(`/error?status=Unknown Error&message=${error}`);
+    }
   }
 });
 </script>
@@ -40,42 +44,27 @@ onBeforeMount(async () => {
           class="playlist-card rounded-lg ma-2"
           elevation="4"
         >
-          <v-img width="100%" :src="playlistData.image || imageUrl" cover>
-          </v-img>
+          <v-img width="100%" :src="playlistData.image" cover> </v-img>
           <v-col justify="space-between" align="center" class="px-3 py-3">
-            <v-card-title
-              class="playlist-card-title text-h4 font-weight-bold"
-              max-width="100%"
-              >{{ playlistData.title }}</v-card-title
-            >
+            <v-card-title class="playlist-card-title text-h4 font-weight-bold" max-width="100%">{{
+              playlistData.title
+            }}</v-card-title>
             <v-card-subtitle class="font-weight-light text-body-1"
-              ><span class="font-weight-bold">{{
-                playlistData.trackCount
-              }}</span>
-              Tracks</v-card-subtitle
+              ><span class="font-weight-bold">{{ playlistData.trackCount }}</span> Tracks</v-card-subtitle
             >
           </v-col>
 
           <v-card-text>
             <div class="font-weight-light text-h6">
               Average Tempo:
-              <span class="font-weight-bold">{{
-                Math.round(playlistData.analysis!.tempo)
-              }}</span>
+              <span class="font-weight-bold">{{ Math.round(playlistData.analysis!.tempo) }}</span>
             </div>
 
             <div class="font-weight-light text-h6">
               Average Duration:
               <span class="font-weight-bold"
-                >{{
-                  Math.floor(playlistData.analysis!.duration / 1000 / 60)
-                }}:{{
-                  (
-                    "0" +
-                    Math.round(
-                      ((playlistData.analysis!.duration / 1000 / 60) % 1) * 60
-                    )
-                  ).slice(-2)
+                >{{ Math.floor(playlistData.analysis!.duration / 1000 / 60) }}:{{
+                  ("0" + Math.round(((playlistData.analysis!.duration / 1000 / 60) % 1) * 60)).slice(-2)
                 }}</span
               >
             </div>
@@ -120,12 +109,7 @@ onBeforeMount(async () => {
           </v-card-item>
         </v-card>
         <div v-else>
-          <v-progress-circular
-            :size="70"
-            :width="7"
-            color="purple"
-            indeterminate
-          ></v-progress-circular>
+          <v-progress-circular :size="70" :width="7" color="purple" indeterminate></v-progress-circular>
         </div>
       </div>
     </v-responsive>

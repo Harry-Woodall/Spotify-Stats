@@ -12,15 +12,10 @@ const props = defineProps({
   },
 });
 
-const testButton = () => {
-  console.log("Click");
-};
-
 const playlistData = reactive<PlaylistOverview>({});
 
 onMounted(async () => {
   const response = await Api.getPlaylistOverview(props.playlistId);
-  console.log(response);
 
   playlistData.id = props.playlistId;
   playlistData.title = response.name;

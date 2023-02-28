@@ -5,22 +5,29 @@ import Api from "@/lib/api";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import PlaylistsData from "@/interfaces/playlistDataInterface";
+import ErrorHelper from "@/helpers/ErrorHelper";
+import RouterHelper from "@/helpers/RouterHelper";
+import StorageHelpers from "@/helpers/StorageHelper";
 
 const router = useRouter();
 
 const playlistData = ref<PlaylistsData>({});
 
 onMounted(async () => {
-  const res = await Api.verifyToken();
+  try {
+    const res = await Api.verifyToken();
 
-  if (!res) {
-    localStorage.removeItem(localStorageEnums.ACCESS_TOKEN);
-    localStorage.removeItem(localStorageEnums.REFRESH_TOKEN);
-    router.push("/");
+    if (!res) {
+      StorageHelpers.DestroyLocalStorage();
+      router.push("/");
+      return;
+    }
+
+    playlistData.value = await Api.getAllPlaylists();
+  } catch (error) {
+    if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response);
+    else router.push(`/error?status=Unknown Error&message=${error}`);
   }
-
-  playlistData.value = await Api.getPlaylistDetails();
-  console.log(playlistData.value);
 });
 </script>
 

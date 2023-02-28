@@ -37,6 +37,17 @@ const routes = [
     ],
   },
   {
+    path: "/error",
+    component: () => import("@/layouts/default/Error.vue"),
+    children: [
+      {
+        path: "",
+        name: "Error",
+        component: () => import("@/views/Error.vue"),
+      },
+    ],
+  },
+  {
     path: "/:token(access_token.*)",
     redirect: (to: any) => ({
       path: "/home",
@@ -51,21 +62,12 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  if (
-    Object.keys(to.query).includes("accessToken") &&
-    Object.keys(to.query).includes("refreshToken")
-  ) {
+  if (Object.keys(to.query).includes("accessToken") && Object.keys(to.query).includes("refreshToken")) {
     if (typeof to.query["accessToken"] === "string")
-      localStorage.setItem(
-        localStorageEnums.ACCESS_TOKEN,
-        to.query["accessToken"]
-      );
+      localStorage.setItem(localStorageEnums.ACCESS_TOKEN, to.query["accessToken"]);
 
     if (typeof to.query["refreshToken"] === "string")
-      localStorage.setItem(
-        localStorageEnums.REFRESH_TOKEN,
-        to.query["refreshToken"]
-      );
+      localStorage.setItem(localStorageEnums.REFRESH_TOKEN, to.query["refreshToken"]);
 
     router.push("home?");
   }
