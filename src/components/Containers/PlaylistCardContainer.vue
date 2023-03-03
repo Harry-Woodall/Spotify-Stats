@@ -3,8 +3,6 @@ import PlaylistOverviewCard from "@/components/Cards/PlaylistOverviewCard/Playli
 import { PropType } from "vue";
 
 const props = defineProps({
-  itemCount: Number,
-  returnedItemCount: Number,
   items: Array as PropType<string[]>,
 });
 </script>

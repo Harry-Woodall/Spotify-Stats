@@ -22,11 +22,15 @@ const Api = {
     // const me = await Gateway.getAsync(AccessTokenInstance.getToken(), "/me");
     // console.log(me);
   },
-  async getAllPlaylists() {
+  async getAllPlaylists(offset?: number) {
     const token = StorageHelpers.GetAccessToken();
 
     if (token) {
-      const response = await Gateway.getAsync(token, "/api/playlists/all");
+      const response = await Gateway.getAsync(
+        token,
+        "/api/playlists/all",
+        offset ? [{ key: "offset", value: offset.toString() }] : undefined
+      );
       return response;
     }
   },
