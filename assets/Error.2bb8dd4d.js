@@ -1,1 +1,0 @@
-import{V as a,_ as e}from"./VApp.9454667e.js";import{d as o,c as r,w as t,o as s,a as p}from"./index.a9f84192.js";import"./tag.9c405cbe.js";import"./resizeObserver.b52d76c7.js";const u=o({__name:"Error",setup(_){return(c,n)=>(s(),r(a,null,{default:t(()=>[p(e)]),_:1}))}});export{u as default};
