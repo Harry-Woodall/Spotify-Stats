@@ -1,6 +1,6 @@
 const settings = {
   // baseEndpoint: "http://localhost:3000",
-  baseEndpoint: "https://spotifyservice2-harrywoodallgh.b4a.run/",
+  baseEndpoint: "https://dull-threads-fly.cyclic.app/",
 };
 
 export default settings;
