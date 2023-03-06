@@ -6,14 +6,15 @@ import ProgressBar from "@/components/Widgets/progressBar.vue";
 import Api from "@/lib/api";
 import RouterHelper from "@/helpers/RouterHelper";
 import ErrorHelper from "@/helpers/ErrorHelper";
-import { PlaylistDetailsState, PlaylistDetailsErrorType } from "@/enums/playlistDetailsEnums";
+import { PlaylistDetailsState } from "@/enums/PlaylistDetailsEnums";
+import ErrorEnum from "@/enums/ErrorEnum";
 
 const router = useRouter();
 
 const playlistData = ref<PlaylistData>({});
 const playlistId = ref("");
 const pageState = ref<PlaylistDetailsState>(PlaylistDetailsState.LOADING);
-const errorType = ref<PlaylistDetailsErrorType>(PlaylistDetailsErrorType.NONE);
+const errorType = ref<ErrorEnum>(ErrorEnum.NONE);
 
 onBeforeMount(async () => {
   const query = router.currentRoute.value.query;
@@ -22,29 +23,45 @@ onBeforeMount(async () => {
   if (query.id) {
     try {
       const response = await Api.getPlaylistData(query.id as string);
-      console.log(response);
 
-      playlistData.value.id = response.id;
-      playlistData.value.title = response.name;
-      playlistData.value.image = response.images[0].url;
-      playlistData.value.trackCount = response.trackCount;
-      playlistData.value.analysis = response.analysis;
+      if (!response.ok) {
+        if (response.status == 401) {
+          await Api.refreshToken();
+          router.go(0);
+          return;
+        }
+
+        throw {
+          response: response,
+        };
+      }
+
+      const playlistDataResult = await response.json();
+
+      playlistData.value.id = playlistDataResult.id;
+      playlistData.value.title = playlistDataResult.name;
+      playlistData.value.image = playlistDataResult.images[0].url;
+      playlistData.value.trackCount = playlistDataResult.trackCount;
+      playlistData.value.analysis = playlistDataResult.analysis;
 
       pageState.value = PlaylistDetailsState.SUCCESS;
     } catch (error) {
-      console.log(typeof error);
-
       if (ErrorHelper.isResponseError(error)) {
         if (error.response.status == 404) {
           pageState.value = PlaylistDetailsState.ERROR;
-          errorType.value = PlaylistDetailsErrorType.MISSING_IDS;
+          errorType.value = ErrorEnum.MISSING_TRACK_IDS;
         } else RouterHelper.HandleErrorResponse(router, error.response);
         return;
       }
 
       if (ErrorHelper.isAbortError(error)) {
         pageState.value = PlaylistDetailsState.ERROR;
-        errorType.value = PlaylistDetailsErrorType.TIMEOUT;
+        errorType.value = ErrorEnum.TIMEOUT;
+        return;
+      }
+
+      if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) {
+        router.push("/");
         return;
       }
 
@@ -139,10 +156,10 @@ onBeforeMount(async () => {
           elevation="4"
           class="d-flex flex-column justify-center pa-5"
         >
-          <h2 v-if="errorType == PlaylistDetailsErrorType.MISSING_IDS" class="text-center">
+          <h2 v-if="errorType == ErrorEnum.MISSING_TRACK_IDS" class="text-center">
             Unfortunately, this playlist is unable to be anylised
           </h2>
-          <h2 v-else-if="errorType == PlaylistDetailsErrorType.TIMEOUT" class="text-center">Error: Server timeout</h2>
+          <h2 v-else-if="errorType == ErrorEnum.TIMEOUT" class="text-center">Error: Server timeout</h2>
           <h2 v-else class="text-center">Something went wrong</h2>
           <v-btn href="#/home" max-width="200px" class="mx-auto mt-5" variant="tonal">Back to playlists</v-btn>
         </v-sheet>

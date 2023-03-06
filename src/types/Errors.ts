@@ -5,3 +5,7 @@ export type ResponseError = {
 export type AbortError = {
   name: string;
 };
+
+export type GenericError = {
+  message: string;
+};

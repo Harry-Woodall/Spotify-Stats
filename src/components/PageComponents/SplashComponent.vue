@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import Api from "@/lib/api";
 import AppSettings from "@/config/appsettings";
-import { onMounted, onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 import StorageHelpers from "@/helpers/StorageHelper";
 import LoginEnum from "@/enums/LoginEnum";
+import ErrorEnum from "@/enums/ErrorEnum";
+import ErrorHelper from "@/helpers/ErrorHelper";
 
 const router = useRouter();
 
@@ -19,7 +21,13 @@ onBeforeMount(async () => {
   currentState.value = LoginEnum.CHECKING_TOKEN;
 
   try {
-    const isValid = await Api.verifyToken();
+    const isValidResponse = await Api.verifyToken();
+    if (!isValidResponse.ok)
+      throw {
+        response: isValidResponse,
+      };
+
+    const isValid = await isValidResponse.json();
 
     currentState.value = isValid ? LoginEnum.VALID_TOKEN : LoginEnum.INVALID_TOKEN;
 
