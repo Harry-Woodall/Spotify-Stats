@@ -4,15 +4,21 @@ import StorageHelpers from "@/helpers/StorageHelper";
 // const token = StorageHelpers.GetAccessToken();
 
 const Api = {
-  async verifyToken() {
-    const token = StorageHelpers.GetAccessToken();
+  async verifyToken(): Promise<Response> {
+    return await Gateway.getAsync(StorageHelpers.GetAccessToken(), "/api/verify");
+  },
+  async refreshToken(): Promise<string> {
+    const response = await Gateway.refreshToken(StorageHelpers.GetRefreshToken());
 
-    if (token) {
-      const res = await Gateway.getAsync(token, "/api/verify");
-      return res;
-    } else {
-      return false;
-    }
+    if (!response.ok)
+      throw {
+        response: response,
+      };
+
+    const token = await response.text();
+    StorageHelpers.UpdateAccessToken(token);
+
+    return token;
   },
   async getDisplayName() {
     // if (!AccessTokenInstance.getToken()) {
@@ -22,31 +28,25 @@ const Api = {
     // const me = await Gateway.getAsync(AccessTokenInstance.getToken(), "/me");
     // console.log(me);
   },
-  async getAllPlaylists(offset?: number) {
-    const token = StorageHelpers.GetAccessToken();
-
-    if (token) {
-      const response = await Gateway.getAsync(
-        token,
-        "/api/playlists/all",
-        offset ? [{ key: "offset", value: offset.toString() }] : undefined
-      );
-      return response;
-    }
+  async getAllPlaylists(offset?: number): Promise<Response> {
+    return await Gateway.getAsync(
+      StorageHelpers.GetAccessToken(),
+      "/api/playlists/all",
+      offset ? [{ key: "offset", value: offset.toString() }] : undefined
+    );
   },
-  async getPlaylistOverview(playlistId: string) {
-    const token = StorageHelpers.GetAccessToken();
-
-    if (token) {
-      const response = await Gateway.getAsync(token, "/api/playlists/overview", [{ key: "id", value: playlistId }]);
-      return response;
-    }
+  async getPlaylistOverview(playlistId: string): Promise<Response> {
+    return await Gateway.getAsync(StorageHelpers.GetAccessToken(), "/api/playlists/overview", [
+      { key: "id", value: playlistId },
+    ]);
   },
-  async getPlaylistData(playlistId: string) {
-    const token = StorageHelpers.GetAccessToken();
-
-    const response = await Gateway.getAsync(token!, `/api/playlists`, [{ key: "id", value: playlistId }]);
-    return response;
+  async getPlaylistData(playlistId: string): Promise<Response> {
+    return await Gateway.getAsync(
+      StorageHelpers.GetAccessToken(),
+      `/api/playlists`,
+      [{ key: "id", value: playlistId }],
+      60000
+    );
   },
 };
 export default Api;

@@ -3,5 +3,5 @@
 </template>
 
 <script lang="ts" setup>
-import Splash from "@/components/PageComponents/Splash/SplashComponent.vue";
+import Splash from "@/components/PageComponents/SplashComponent.vue";
 </script>

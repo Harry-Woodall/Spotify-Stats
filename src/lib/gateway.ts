@@ -2,31 +2,18 @@ import AppSettings from "@/config/appsettings";
 import Query from "@/interfaces/gatewayInterfaces";
 
 const Gateway = {
-  getAsync: (token: string, url: string, querys?: Query[]): Promise<Response> | Promise<any> => {
-    const controller = new AbortController();
-    const controllerId = setTimeout(() => controller.abort(), 1000);
-
+  getAsync: (token: string, url: string, querys?: Query[], timeout?: number): Promise<Response> | Promise<any> => {
     return fetch(`${AppSettings.baseEndpoint}${url}/?accessToken=${token}${buildQueryString(querys)}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "force-cache",
-      signal: controller.signal,
-    })
-      .then((playlistResponse) => {
-        clearTimeout(controllerId);
-        if (playlistResponse.ok) return playlistResponse.json();
-
-        throw {
-          response: playlistResponse,
-        };
-      })
-      .then((data) => {
-        return data;
-      })
-      .catch((error: Error) => {
-        throw error;
-      });
+      // headers: {
+      //   Authorization: `Bearer ${token}`,
+      // },
+      signal: AbortSignal.timeout(timeout || 20000),
+    });
+  },
+  refreshToken: (refreshToken: string) => {
+    return fetch(`${AppSettings.baseEndpoint}/refreshToken?refreshToken=${refreshToken}`, {
+      signal: AbortSignal.timeout(10000),
+    });
   },
 };
 

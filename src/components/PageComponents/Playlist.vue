@@ -24,14 +24,30 @@ onBeforeMount(async () => {
     try {
       const response = await Api.getPlaylistData(query.id as string);
 
-      playlistData.value.id = response.id;
-      playlistData.value.title = response.name;
-      playlistData.value.image = response.images[0].url;
-      playlistData.value.trackCount = response.trackCount;
-      playlistData.value.analysis = response.analysis;
+      if (!response.ok) {
+        if (response.status == 401) {
+          await Api.refreshToken();
+          router.go(0);
+          return;
+        }
+
+        throw {
+          response: response,
+        };
+      }
+
+      const playlistDataResult = await response.json();
+
+      playlistData.value.id = playlistDataResult.id;
+      playlistData.value.title = playlistDataResult.name;
+      playlistData.value.image = playlistDataResult.images[0].url;
+      playlistData.value.trackCount = playlistDataResult.trackCount;
+      playlistData.value.analysis = playlistDataResult.analysis;
 
       pageState.value = PlaylistDetailsState.SUCCESS;
     } catch (error) {
+      console.log(error);
+
       if (ErrorHelper.isResponseError(error)) {
         if (error.response.status == 404) {
           pageState.value = PlaylistDetailsState.ERROR;
@@ -43,6 +59,11 @@ onBeforeMount(async () => {
       if (ErrorHelper.isAbortError(error)) {
         pageState.value = PlaylistDetailsState.ERROR;
         errorType.value = ErrorEnum.TIMEOUT;
+        return;
+      }
+
+      if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) {
+        router.push("/");
         return;
       }
 

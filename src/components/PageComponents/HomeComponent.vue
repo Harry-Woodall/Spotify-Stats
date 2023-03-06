@@ -6,8 +6,8 @@ import { useRouter } from "vue-router";
 import PlaylistsData from "@/interfaces/playlistDataInterface";
 import ErrorHelper from "@/helpers/ErrorHelper";
 import RouterHelper from "@/helpers/RouterHelper";
-import StorageHelpers from "@/helpers/StorageHelper";
-// import { PlaylistData } from "@/interfaces/playlistCardInterfaces";
+import ValidationHelper from "@/helpers/ValidationHelper";
+import ErrorEnum from "@/enums/ErrorEnum";
 
 const router = useRouter();
 
@@ -21,23 +21,17 @@ const nextPlaylists = ref({
 
 onMounted(async () => {
   try {
-    const res = await Api.verifyToken();
+    await ValidationHelper.validatePage();
 
-    if (!res) {
-      StorageHelpers.DestroyLocalStorage();
-      router.push("/");
-      return;
-    }
+    const playlistData = await getPlaylistsData();
 
-    const response: PlaylistsData = await Api.getAllPlaylists();
-    console.log(response);
+    nextPlaylists.value.hasNext = playlistData.nextOffset != null;
+    if (playlistData.nextOffset) nextPlaylists.value.nextOffset = playlistData.nextOffset;
 
-    nextPlaylists.value.hasNext = response.nextOffset != null;
-    if (response.nextOffset) nextPlaylists.value.nextOffset = response.nextOffset;
-
-    playlistItems.value.push(...response.items!);
+    playlistItems.value.push(...playlistData.items!);
   } catch (error) {
     if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response);
+    if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) router.push("/");
     else router.push(`/error?status=Unknown Error&message=${error}`);
   }
 });
@@ -45,16 +39,28 @@ onMounted(async () => {
 const getMorePlaylists = async () => {
   nextPlaylists.value.gettingPlaylists = true;
 
-  const morePlaylistResponse: PlaylistsData = await Api.getAllPlaylists(nextPlaylists.value.nextOffset);
+  try {
+    const playlists = await getPlaylistsData(nextPlaylists.value.nextOffset);
 
-  playlistItems.value.push(...morePlaylistResponse.items!);
+    playlistItems.value.push(...playlists.items!);
+    nextPlaylists.value.hasNext = playlists.nextOffset != null;
+    if (playlists.nextOffset) nextPlaylists.value.nextOffset = playlists.nextOffset!;
 
-  nextPlaylists.value.hasNext = morePlaylistResponse.nextOffset != null;
-  if (morePlaylistResponse.nextOffset) nextPlaylists.value.nextOffset = morePlaylistResponse.nextOffset!;
+    nextPlaylists.value.gettingPlaylists = false;
+  } catch (error) {
+    if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response);
+    else router.push(`/error?status=Unknown Error&message=${error}`);
+  }
+};
 
-  console.log(morePlaylistResponse.nextOffset);
+const getPlaylistsData = async (offset?: number): Promise<PlaylistsData> => {
+  const playlistDataResponse = await Api.getAllPlaylists(offset);
+  if (!playlistDataResponse.ok)
+    throw {
+      respose: playlistDataResponse,
+    };
 
-  nextPlaylists.value.gettingPlaylists = false;
+  return (await playlistDataResponse.json()) as PlaylistsData;
 };
 
 const handleError = () => {

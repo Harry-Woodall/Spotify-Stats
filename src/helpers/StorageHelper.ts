@@ -1,4 +1,5 @@
 import localStorageEnums from "@/enums/LocalStorageEnums";
+import ErrorEnum from "@/enums/ErrorEnum";
 
 const StorageHelpers = {
   DestroyLocalStorage() {
@@ -14,8 +15,28 @@ const StorageHelpers = {
     localStorage.setItem(localStorageEnums.ACCESS_TOKEN, accessToken);
     localStorage.setItem(localStorageEnums.REFRESH_TOKEN, refreshToken);
   },
+  UpdateAccessToken(accessToken: string) {
+    localStorage.setItem(localStorageEnums.ACCESS_TOKEN, accessToken);
+  },
   GetAccessToken() {
-    return localStorage.getItem(localStorageEnums.ACCESS_TOKEN);
+    const token = localStorage.getItem(localStorageEnums.ACCESS_TOKEN);
+
+    if (!token)
+      throw {
+        message: ErrorEnum.NO_TOKEN,
+      };
+
+    return token;
+  },
+  GetRefreshToken() {
+    const token = localStorage.getItem(localStorageEnums.REFRESH_TOKEN);
+
+    if (!token)
+      throw {
+        message: ErrorEnum.NO_TOKEN,
+      };
+
+    return token;
   },
 };
 

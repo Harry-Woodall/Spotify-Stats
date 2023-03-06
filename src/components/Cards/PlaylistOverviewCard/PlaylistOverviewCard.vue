@@ -24,12 +24,19 @@ onMounted(async () => {
   try {
     const response = await Api.getPlaylistOverview(props.playlistId);
 
-    playlistData.id = props.playlistId;
-    playlistData.title = response.name;
-    playlistData.trackCount = response.trackCount;
-    playlistData.owner = response.owner;
+    if (!response.ok)
+      throw {
+        response: response,
+      };
 
-    if (response.images.length) playlistData.image = response.images[0].url;
+    const playlistOverview = await response.json();
+
+    playlistData.id = props.playlistId;
+    playlistData.title = playlistOverview.name;
+    playlistData.trackCount = playlistOverview.trackCount;
+    playlistData.owner = playlistOverview.owner;
+
+    if (playlistOverview.images.length) playlistData.image = playlistOverview.images[0].url;
     else playlistData.image = "/images/ImagePlaceholder.svg";
   } catch (error) {
     errorType.value = ErrorEnum.UNKNOWN;

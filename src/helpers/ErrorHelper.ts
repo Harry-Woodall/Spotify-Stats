@@ -1,4 +1,4 @@
-import { ResponseError, AbortError } from "@/types/Errors";
+import { ResponseError, AbortError, GenericError } from "@/types/Errors";
 
 const ErrorHelper = {
   isResponseError(error: unknown): error is ResponseError {
@@ -6,6 +6,9 @@ const ErrorHelper = {
   },
   isAbortError(error: unknown): error is AbortError {
     return typeof error === "object" && error != null && "name" in error && error.name == "AbortError";
+  },
+  isGenericError(error: unknown): error is GenericError {
+    return typeof error === "object" && error != null && "message" in error;
   },
 };
 
