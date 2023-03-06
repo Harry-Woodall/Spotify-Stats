@@ -16,11 +16,6 @@ const props = defineProps({
 const test = (val: boolean) => {
   props.updateDrawState(val);
 };
-
-// onMounted(async () => {
-//   const user = await Api.getDisplayName();
-//   console.log(user);
-// });
 </script>
 
 <template>
@@ -34,30 +29,15 @@ const test = (val: boolean) => {
     @update:model-value="test"
   >
     <v-list>
-      <v-list-item
-        prepend-avatar="https://randomuser.me/api/portraits/men/1.jpg"
-        title="[[USERNAME]]"
-      ></v-list-item>
+      <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/1.jpg" title="[[USERNAME]]"></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
 
     <v-list density="compact" nav>
-      <v-list-item
-        prepend-icon="mdi-album"
-        title="Favourite Tracks"
-        value="tracks"
-      ></v-list-item>
-      <v-list-item
-        prepend-icon="mdi-account-music"
-        title="Favourite Artists"
-        value="artists"
-      ></v-list-item>
-      <v-list-item
-        prepend-icon="mdi-playlist-music"
-        title="Playlist Breakdown"
-        value="playlist"
-      ></v-list-item>
+      <v-list-item prepend-icon="mdi-album" title="Favourite Tracks" value="tracks"></v-list-item>
+      <v-list-item prepend-icon="mdi-account-music" title="Favourite Artists" value="artists"></v-list-item>
+      <v-list-item prepend-icon="mdi-playlist-music" title="Playlist Breakdown" value="playlist"></v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>

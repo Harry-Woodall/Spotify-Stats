@@ -46,8 +46,6 @@ onBeforeMount(async () => {
 
       pageState.value = PlaylistDetailsState.SUCCESS;
     } catch (error) {
-      console.log(error);
-
       if (ErrorHelper.isResponseError(error)) {
         if (error.response.status == 404) {
           pageState.value = PlaylistDetailsState.ERROR;
