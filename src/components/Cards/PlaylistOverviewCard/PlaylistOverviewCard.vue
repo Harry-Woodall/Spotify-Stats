@@ -37,7 +37,7 @@ onMounted(async () => {
     playlistData.owner = playlistOverview.owner;
 
     if (playlistOverview.images.length) playlistData.image = playlistOverview.images[0].url;
-    else playlistData.image = "/images/ImagePlaceholder.svg";
+    else playlistData.image = "images/ImagePlaceholder.svg";
   } catch (error) {
     errorType.value = ErrorEnum.UNKNOWN;
 
