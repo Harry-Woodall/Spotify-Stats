@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import PlaylistCardContainer from "@/components/Containers/PlaylistCardContainer.vue";
-import localStorageEnums from "@/enums/LocalStorageEnums";
 import Api from "@/lib/api";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -57,6 +56,10 @@ const getMorePlaylists = async () => {
 
   nextPlaylists.value.gettingPlaylists = false;
 };
+
+const handleError = () => {
+  router.push(`/error?message=Failed to load playlists`);
+};
 </script>
 
 <template>
@@ -64,7 +67,7 @@ const getMorePlaylists = async () => {
     <v-responsive class="d-flex fill-height">
       <h1>My Playlists</h1>
       <v-divider class="my-5"></v-divider>
-      <PlaylistCardContainer :items="playlistItems" />
+      <PlaylistCardContainer :items="playlistItems" @error="handleError" />
       <div v-if="nextPlaylists.hasNext" class="d-flex justify-center">
         <v-btn v-if="!nextPlaylists.gettingPlaylists" variant="tonal" class="my-8" @click="getMorePlaylists"
           >More playlists...</v-btn

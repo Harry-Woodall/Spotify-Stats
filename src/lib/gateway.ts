@@ -4,7 +4,7 @@ import Query from "@/interfaces/gatewayInterfaces";
 const Gateway = {
   getAsync: (token: string, url: string, querys?: Query[]): Promise<Response> | Promise<any> => {
     const controller = new AbortController();
-    const controllerId = setTimeout(() => controller.abort(), 20000);
+    const controllerId = setTimeout(() => controller.abort(), 1000);
 
     return fetch(`${AppSettings.baseEndpoint}${url}/?accessToken=${token}${buildQueryString(querys)}`, {
       headers: {
@@ -16,7 +16,6 @@ const Gateway = {
       .then((playlistResponse) => {
         clearTimeout(controllerId);
         if (playlistResponse.ok) return playlistResponse.json();
-        console.log(playlistResponse);
 
         throw {
           response: playlistResponse,

@@ -7,8 +7,7 @@ const StorageHelpers = {
   },
   TokenExists() {
     return (
-      localStorage.getItem(localStorageEnums.ACCESS_TOKEN) &&
-      localStorage.getItem(localStorageEnums.REFRESH_TOKEN)
+      localStorage.getItem(localStorageEnums.ACCESS_TOKEN) && localStorage.getItem(localStorageEnums.REFRESH_TOKEN)
     );
   },
   SetToken(accessToken: string, refreshToken: string) {
