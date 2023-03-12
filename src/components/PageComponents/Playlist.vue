@@ -8,8 +8,13 @@ import RouterHelper from "@/helpers/RouterHelper";
 import ErrorHelper from "@/helpers/ErrorHelper";
 import { PlaylistDetailsState } from "@/enums/PlaylistDetailsEnums";
 import ErrorEnum from "@/enums/ErrorEnum";
+import activityChart from "@/components/Charts/activityChart.vue";
+import PlaylistHeaderCard from "@/components/Cards/PlaylistHeaderCard.vue";
+import PlaylistDetails from "@/components/Content/playlistDetails.vue";
+import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const router = useRouter();
+const { xs } = useDisplay();
 
 const playlistData = ref<PlaylistData>({});
 const playlistId = ref("");
@@ -37,12 +42,10 @@ onBeforeMount(async () => {
       }
 
       const playlistDataResult = await response.json();
+      console.log(playlistDataResult);
 
-      playlistData.value.id = playlistDataResult.id;
-      playlistData.value.title = playlistDataResult.name;
-      playlistData.value.image = playlistDataResult.images[0].url;
-      playlistData.value.trackCount = playlistDataResult.trackCount;
-      playlistData.value.analysis = playlistDataResult.analysis;
+      playlistDataResult.image = playlistDataResult.images[0].url;
+      playlistData.value = playlistDataResult;
 
       pageState.value = PlaylistDetailsState.SUCCESS;
     } catch (error) {
@@ -75,80 +78,22 @@ onBeforeMount(async () => {
   <v-container class="fill-height">
     <v-responsive class="align-center">
       <div class="d-flex justify-center">
-        <v-card
+        <!-- <PlaylistHeaderCard :playlistData="playlistData" v-if="pageState == PlaylistDetailsState.SUCCESS" /> -->
+
+        <div
+          class="w-100 d-flex justify-center align-center flex-column"
           v-if="pageState == PlaylistDetailsState.SUCCESS"
-          max-width="500px"
-          width="100%"
-          class="playlist-card rounded-lg ma-2"
-          elevation="4"
         >
-          <v-img width="100%" :src="playlistData.image" cover> </v-img>
-          <v-col justify="space-between" align="center" class="px-3 py-3">
-            <v-card-title class="playlist-card-title text-h4 font-weight-bold" max-width="100%">{{
-              playlistData.title
-            }}</v-card-title>
-            <v-card-subtitle class="font-weight-light text-body-1"
-              ><span class="font-weight-bold">{{ playlistData.trackCount }}</span> Tracks</v-card-subtitle
-            >
-          </v-col>
+          <PlaylistHeaderCard :playlistData="playlistData" />
+          <v-divider :class="xs ? 'my-10' : 'my-15'"></v-divider>
+          <playlistDetails :playlistData="playlistData" />
+          <activityChart v-if="Object.keys(playlistData.activity!).length > 3" :activity-data="playlistData.activity" />
+        </div>
 
-          <v-card-text>
-            <div class="font-weight-light text-h6">
-              Average Tempo:
-              <span class="font-weight-bold">{{ Math.round(playlistData.analysis!.tempo) }}</span>
-            </div>
-
-            <div class="font-weight-light text-h6">
-              Average Duration:
-              <span class="font-weight-bold"
-                >{{ Math.floor(playlistData.analysis!.duration / 1000 / 60) }}:{{
-                  ("0" + Math.round(((playlistData.analysis!.duration / 1000 / 60) % 1) * 60)).slice(-2)
-                }}</span
-              >
-            </div>
-          </v-card-text>
-          <v-card-item>
-            <div class="mb-5">
-              <ProgressBar
-                :ammount="playlistData.analysis!.energy"
-                :id="playlistData.title + '-energy'"
-                label="Energy"
-                :range="[0, 1]"
-                icon="mdi-lightning-bolt"
-              />
-            </div>
-            <div class="mb-5">
-              <ProgressBar
-                :ammount="playlistData.analysis!.danceability"
-                :id="playlistData.title + '-dancability'"
-                label="Dancibility"
-                :range="[0, 1]"
-                icon="mdi-human-female-dance"
-              />
-            </div>
-            <div class="mb-5">
-              <ProgressBar
-                :ammount="playlistData.analysis!.instrumentalness"
-                :id="playlistData.title + '-vocals'"
-                label="Vocals"
-                :range="[1, 0]"
-                icon="mdi-microphone"
-              />
-            </div>
-            <div class="mb-5">
-              <ProgressBar
-                :ammount="playlistData.analysis!.valence"
-                :id="playlistData.title + '-happiness'"
-                label="Happiness"
-                :range="[0, 1]"
-                icon="mdi-emoticon-happy"
-              />
-            </div>
-          </v-card-item>
-        </v-card>
         <div v-else-if="pageState == PlaylistDetailsState.LOADING">
           <v-progress-circular :size="70" :width="7" color="purple" indeterminate></v-progress-circular>
         </div>
+
         <v-sheet
           v-else-if="pageState == PlaylistDetailsState.ERROR"
           rounded="lg"
@@ -167,13 +112,3 @@ onBeforeMount(async () => {
     </v-responsive>
   </v-container>
 </template>
-
-<style scoped>
-.playlist-card-title {
-  max-width: 100%;
-  white-space: pre-wrap;
-}
-.playlist-card {
-  background-color: rgba(0, 0, 0, 0.3);
-}
-</style>
