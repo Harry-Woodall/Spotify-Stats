@@ -2,58 +2,120 @@ export interface PlaylistData {
   id?: string;
   name?: string;
   image?: string;
-  activity?: Object;
   trackCount?: number;
-  oldestTrack?: {
-    addedAt: string;
-    name: string;
-    id: string;
-    artists: string[];
-    image: Image;
+  stats?: {
+    analysis?: Analysis;
+    activity?: {
+      date: string;
+      frequency: number;
+    }[];
+    earliestTrack?: {
+      addedAt: string;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    latestTrack?: {
+      addedAt: string;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    newestTrack?: {
+      addedAt: string;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    oldestTrack?: {
+      addedAt: string;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    longestTrack?: {
+      duration_ms: number;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    shortestTrack?: {
+      duration_ms: number;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    highestEnergy?: {
+      energy: number;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    lowestEnergy?: {
+      energy: number;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    highestDanceability?: {
+      danceability: number;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    lowestDanceability?: {
+      danceability: number;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    highestValence?: {
+      valence: number;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
+    lowestValence?: {
+      valence: number;
+      releaseDate: string;
+      name: string;
+      id: string;
+      artists: DataObject[];
+      image: Image;
+    };
   };
-  newestTrack?: {
-    addedAt: string;
-    name: string;
-    id: string;
-    artists: string[];
-    image: Image;
-  };
-  longestTrack?: {
-    duration_ms: number;
-    name: string;
-    id: string;
-    artists: string[];
-    image: Image;
-  };
-  shortestTrack?: {
-    duration_ms: number;
-    name: string;
-    id: string;
-    artists: string[];
-    image: Image;
-  };
-  highestEnergy?: {
-    energy: number;
-    name: string;
-    id: string;
-    artists: string[];
-    image: Image;
-  };
-  highestDanceability?: {
-    danceability: number;
-    name: string;
-    id: string;
-    artists: string[];
-    image: Image;
-  };
-  highestValence?: {
-    valence: number;
-    name: string;
-    id: string;
-    artists: string[];
-    image: Image;
-  };
-  analysis?: Analysis;
+}
+
+export interface DataObject {
+  name: string;
+  id: string;
+}
+
+export interface Activity {
+  date: string;
+  frequency: number;
 }
 
 interface Image {

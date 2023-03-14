@@ -24,18 +24,18 @@ defineProps({
     <v-card-text>
       <div class="font-weight-light text-h6">
         Average Tempo:
-        <span class="font-weight-bold">{{ Math.round(playlistData.analysis!.tempo) }}</span>
+        <span class="font-weight-bold">{{ Math.round(playlistData.stats!.analysis!.tempo) }}</span>
       </div>
 
       <div class="font-weight-light text-h6">
         Average Duration:
-        <span class="font-weight-bold">{{ ComponentHelper.convertTime(playlistData.analysis!.duration) }}</span>
+        <span class="font-weight-bold">{{ ComponentHelper.convertTime(playlistData.stats!.analysis!.duration) }}</span>
       </div>
     </v-card-text>
     <v-card-item>
       <div class="mb-5">
         <ProgressBar
-          :ammount="playlistData.analysis!.energy"
+          :ammount="playlistData.stats!.analysis!.energy"
           :id="playlistData.name + '-energy'"
           label="Energy"
           :range="[0, 1]"
@@ -44,7 +44,7 @@ defineProps({
       </div>
       <div class="mb-5">
         <ProgressBar
-          :ammount="playlistData.analysis!.danceability"
+          :ammount="playlistData.stats!.analysis!.danceability"
           :id="playlistData.name + '-dancability'"
           label="Dancibility"
           :range="[0, 1]"
@@ -53,7 +53,7 @@ defineProps({
       </div>
       <div class="mb-5">
         <ProgressBar
-          :ammount="playlistData.analysis!.instrumentalness"
+          :ammount="playlistData.stats!.analysis!.instrumentalness"
           :id="playlistData.name + '-vocals'"
           label="Vocals"
           :range="[1, 0]"
@@ -62,9 +62,9 @@ defineProps({
       </div>
       <div class="mb-5">
         <ProgressBar
-          :ammount="playlistData.analysis!.valence"
+          :ammount="playlistData.stats!.analysis!.valence"
           :id="playlistData.name + '-happiness'"
-          label="Happiness"
+          label="Positivity"
           :range="[0, 1]"
           icon="mdi-emoticon-happy"
         />

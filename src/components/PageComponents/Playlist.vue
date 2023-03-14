@@ -10,7 +10,8 @@ import { PlaylistDetailsState } from "@/enums/PlaylistDetailsEnums";
 import ErrorEnum from "@/enums/ErrorEnum";
 import activityChart from "@/components/Charts/activityChart.vue";
 import PlaylistHeaderCard from "@/components/Cards/PlaylistHeaderCard.vue";
-import PlaylistDetails from "@/components/Content/playlistDetails.vue";
+import PlaylistMainDetails from "@/components/Content/playlistMainDetails.vue";
+import PlaylistExtraDetails from "@/components/Content/playlistExtraDetails.vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const router = useRouter();
@@ -78,16 +79,18 @@ onBeforeMount(async () => {
   <v-container class="fill-height">
     <v-responsive class="align-center">
       <div class="d-flex justify-center">
-        <!-- <PlaylistHeaderCard :playlistData="playlistData" v-if="pageState == PlaylistDetailsState.SUCCESS" /> -->
-
         <div
           class="w-100 d-flex justify-center align-center flex-column"
           v-if="pageState == PlaylistDetailsState.SUCCESS"
         >
           <PlaylistHeaderCard :playlistData="playlistData" />
           <v-divider :class="xs ? 'my-10' : 'my-15'"></v-divider>
-          <playlistDetails :playlistData="playlistData" />
-          <activityChart v-if="Object.keys(playlistData.activity!).length > 3" :activity-data="playlistData.activity" />
+          <PlaylistMainDetails :playlistData="playlistData" />
+          <PlaylistExtraDetails :playlistData="playlistData" />
+          <activityChart
+            v-if="playlistData.stats!.activity!.length > 3"
+            :activity-data="playlistData.stats!.activity"
+          />
         </div>
 
         <div v-else-if="pageState == PlaylistDetailsState.LOADING">

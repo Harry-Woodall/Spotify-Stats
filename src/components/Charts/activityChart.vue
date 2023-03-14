@@ -1,20 +1,26 @@
 <script lang="ts" setup>
-import { onMounted, onUpdated, ref } from "vue";
+import { onMounted, onUpdated, PropType, ref } from "vue";
 import { Chart, ChartData, ChartItem, ChartTypeRegistry, registerables } from "chart.js";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import { Activity } from "@/interfaces/playlistCardInterfaces";
 
-const { xs } = useDisplay();
+const { xs, name } = useDisplay();
+let previousSize = name.value;
 
 const props = defineProps({
-  activityData: { type: Object },
+  activityData: Array as PropType<Activity[]>,
 });
 
-let chart: Chart<keyof ChartTypeRegistry, { x: string; y: number }[], unknown>;
+let chart: Chart<keyof ChartTypeRegistry, { x: string; y: [number, number] }[], unknown>;
 const mobileHeight = ref<string>("500px");
-const fullDataSet = ref<Object>({});
+const fullDataSet = ref<Activity[]>([]);
 
 const getTickLabel = (index: number) => {
-  return Object.keys(fullDataSet.value)[index];
+  return fullDataSet.value[index].date;
+};
+
+const getTickValue = (index: number) => {
+  return fullDataSet.value[index].frequency;
 };
 
 const formatTickLabel = (label: string) => {
@@ -23,28 +29,35 @@ const formatTickLabel = (label: string) => {
 };
 
 onUpdated(() => {
-  generateData();
+  buildChart();
 });
 
 onMounted(() => {
+  buildChart();
+});
+
+const onResize = () => {
+  if ((name.value == "xs" && previousSize != "xs") || (previousSize == "xs" && name.value != "xs")) buildChart();
+
+  previousSize = name.value;
+};
+
+const buildChart = () => {
   const ctx = document.getElementById("activity-chart") as ChartItem;
   Chart.register(...registerables);
 
-  const datasets: ChartData<"bar", { x: string; y: number }[]> = {
+  console.log(props.activityData);
+  let percentage = 0.9;
+
+  const datasets: ChartData<"bar", { x: string; y: [number, number] }[]> = {
     datasets: [
       {
+        categoryPercentage: percentage,
+        barPercentage: percentage,
         data: [],
         backgroundColor: "#e33ce9",
         borderRadius: 3,
-        parsing: {
-          xAxisKey: xs.value ? "y" : "x",
-          yAxisKey: xs.value ? "x" : "y",
-        },
-      },
-      {
-        data: [],
-        backgroundColor: "#e33ce9",
-        borderRadius: 3,
+        borderSkipped: false,
         parsing: {
           xAxisKey: xs.value ? "y" : "x",
           yAxisKey: xs.value ? "x" : "y",
@@ -67,7 +80,12 @@ onMounted(() => {
           display: false,
         },
         tooltip: {
-          enabled: false,
+          enabled: true,
+          callbacks: {
+            label: function (toolTipItem) {
+              return getTickValue(toolTipItem.dataIndex).toString();
+            },
+          },
         },
       },
       scales: {
@@ -78,7 +96,7 @@ onMounted(() => {
           },
           stacked: true,
           ticks: {
-            color: "#bb86fc",
+            color: "#ffffff",
             font: {
               family: "roboto",
               size: 15,
@@ -99,7 +117,7 @@ onMounted(() => {
           },
           stacked: true,
           ticks: {
-            color: "#bb86fc",
+            color: "#ffffff",
             font: {
               family: "roboto",
               size: 16,
@@ -122,51 +140,47 @@ onMounted(() => {
   });
 
   generateData();
-});
+};
 
 const generateData = () => {
   let data = addMissingDates(props.activityData!);
   fullDataSet.value = data;
 
-  mobileHeight.value = `${Object.keys(data).length * 20}px`;
-  console.log(mobileHeight.value);
+  mobileHeight.value = `${data.length * 15}px`;
+
+  type dataItem = {
+    x: string;
+    y: [number, number];
+  };
 
   if (data) {
-    const values = Object.keys(data)?.map((key) => {
-      return { x: key, y: data![key] as number };
+    const values: dataItem[] = data.map((item) => {
+      return { x: item.date, y: [xs.value ? 0 : -item.frequency, item.frequency] };
     });
 
-    values.forEach((value) => {
+    console.log(values);
+
+    values.forEach((value: dataItem) => {
       chart.data.datasets[0].data.push(value);
     });
-
-    if (!xs.value) {
-      const reverseValues = Object.keys(data)?.map((key) => {
-        return { x: key, y: (data![key] as number) * -1 };
-      });
-
-      reverseValues.forEach((value) => {
-        chart.data.datasets[1].data.push(value);
-      });
-    }
 
     chart.update();
   }
 };
 
-const addMissingDates = (dateObject: { [key: string]: any }) => {
-  let populatedActivityData: { [key: string]: any } = {};
+const addMissingDates = (dates: Activity[]) => {
+  let populatedActivityData: Activity[] = [];
 
   let previousDate: Date = new Date(0);
-  for (let item of Object.keys(dateObject)) {
-    let currentDateItems = item.split("-");
+  for (let item of dates) {
+    let currentDateItems = item.date.split("-");
     let currentMonth = parseInt(currentDateItems[0]);
     let currentYear = parseInt(currentDateItems[1]);
     let currentDate = new Date(currentYear, currentMonth - 1);
 
     if (previousDate.getTime() == 0) {
       previousDate = currentDate;
-      populatedActivityData[item] = dateObject[item];
+      populatedActivityData.push(item);
       continue;
     }
 
@@ -175,10 +189,10 @@ const addMissingDates = (dateObject: { [key: string]: any }) => {
 
     for (let i = 0; i < monthDiff; i++) {
       let nextDate = new Date(previousDate.setMonth(previousDate.getMonth() + 1));
-      populatedActivityData[`${nextDate.getMonth() + 1}-${nextDate.getFullYear()}`] = 0;
+      populatedActivityData.push({ date: `${nextDate.getMonth() + 1}-${nextDate.getFullYear()}`, frequency: 0 });
     }
 
-    populatedActivityData[item] = dateObject[item];
+    populatedActivityData.push(item);
 
     previousDate = currentDate;
   }
@@ -188,13 +202,13 @@ const addMissingDates = (dateObject: { [key: string]: any }) => {
 </script>
 
 <template>
-  <v-sheet class="pa-5 mt-10" rounded color="rgba(0,0,0,0.5)" width="100%">
+  <v-sheet class="pa-5 mt-15" rounded color="rgba(0,0,0,0.5)" width="100%">
     <h2>Playlist activity</h2>
     <p class="text-subtitle-2 sub-heading mb-10">How often songs are added to this playlist</p>
-    <div v-if="xs" class="activity-chart-container" :style="'height: ' + mobileHeight">
+    <div v-if="xs" v-resize="onResize" class="activity-chart-container" :style="'height: ' + mobileHeight">
       <canvas id="activity-chart"></canvas>
     </div>
-    <canvas v-else id="activity-chart"></canvas>
+    <canvas v-else v-resize="onResize" id="activity-chart"></canvas>
   </v-sheet>
 </template>
 
