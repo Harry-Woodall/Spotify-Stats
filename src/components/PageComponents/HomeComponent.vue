@@ -17,7 +17,6 @@ const nextPlaylists = ref({
   nextOffset: 0,
   gettingPlaylists: false,
 });
-// const playlistData: PlaylistData = ref<PlaylistsData>({});
 
 onMounted(async () => {
   try {
@@ -31,7 +30,7 @@ onMounted(async () => {
     playlistItems.value.push(...playlistData.items!);
   } catch (error) {
     if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response);
-    if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) router.push("/");
+    else if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) router.push("/");
     else router.push(`/error?status=Unknown Error&message=${error}`);
   }
 });

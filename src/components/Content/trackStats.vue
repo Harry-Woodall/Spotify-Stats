@@ -56,19 +56,19 @@ const headerClasses = [baseHeaderClass + "mt-8", baseHeaderClass + "mt-15 text-h
     />
     <h2 :class="xs ? headerClasses[0] : headerClasses[1]">Track stats</h2>
     <TrackCard
-      v-if="playlistData.stats?.newestTrack"
-      title="Lastest release"
-      :track="playlistData.stats?.newestTrack?.name"
-      :artist="playlistData.stats?.newestTrack?.artists"
-      :value="new Date(playlistData.stats!.newestTrack!.releaseDate).toLocaleDateString(undefined, {year: 'numeric'})"
-      :hasBorder="true"
-    />
-    <TrackCard
       v-if="playlistData.stats?.oldestTrack"
       title="Earliest release"
       :track="playlistData.stats?.oldestTrack?.name"
       :artist="playlistData.stats?.oldestTrack?.artists"
       :value="new Date(playlistData.stats!.oldestTrack!.releaseDate).toLocaleDateString(undefined, {year: 'numeric'})"
+      :hasBorder="true"
+    />
+    <TrackCard
+      v-if="playlistData.stats?.newestTrack"
+      title="Lastest release"
+      :track="playlistData.stats?.newestTrack?.name"
+      :artist="playlistData.stats?.newestTrack?.artists"
+      :value="new Date(playlistData.stats!.newestTrack!.releaseDate).toLocaleDateString(undefined, {year: 'numeric'})"
       :hasBorder="true"
     />
     <TrackCard

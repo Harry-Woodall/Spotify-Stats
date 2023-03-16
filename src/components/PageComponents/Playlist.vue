@@ -10,8 +10,10 @@ import { PlaylistDetailsState } from "@/enums/PlaylistDetailsEnums";
 import ErrorEnum from "@/enums/ErrorEnum";
 import activityChart from "@/components/Charts/activityChart.vue";
 import PlaylistHeaderCard from "@/components/Cards/PlaylistHeaderCard.vue";
+import PlaylistRankings from "@/components/Content/playlistRankings.vue";
 import PlaylistMainDetails from "@/components/Content/playlistMainDetails.vue";
-import PlaylistExtraDetails from "@/components/Content/playlistExtraDetails.vue";
+import PlaylistStats from "@/components/Content/playlistStats.vue";
+import TrackStats from "@/components/Content/trackStats.vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const router = useRouter();
@@ -86,7 +88,10 @@ onBeforeMount(async () => {
           <PlaylistHeaderCard :playlistData="playlistData" />
           <v-divider :class="xs ? 'my-10' : 'my-15'"></v-divider>
           <PlaylistMainDetails :playlistData="playlistData" />
-          <PlaylistExtraDetails :playlistData="playlistData" />
+          <PlaylistRankings :playlistData="playlistData" />
+
+          <PlaylistStats :playlistData="playlistData" />
+          <TrackStats :playlistData="playlistData" />
           <activityChart
             v-if="playlistData.stats!.activity!.length > 3"
             :activity-data="playlistData.stats!.activity"

@@ -45,8 +45,6 @@ const onResize = () => {
 const buildChart = () => {
   const ctx = document.getElementById("activity-chart") as ChartItem;
   Chart.register(...registerables);
-
-  console.log(props.activityData);
   let percentage = 0.9;
 
   const datasets: ChartData<"bar", { x: string; y: [number, number] }[]> = {
@@ -157,8 +155,6 @@ const generateData = () => {
     const values: dataItem[] = data.map((item) => {
       return { x: item.date, y: [xs.value ? 0 : -item.frequency, item.frequency] };
     });
-
-    console.log(values);
 
     values.forEach((value: dataItem) => {
       chart.data.datasets[0].data.push(value);

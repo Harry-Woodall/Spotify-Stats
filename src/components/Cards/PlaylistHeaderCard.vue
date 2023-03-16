@@ -3,6 +3,9 @@ import { PropType } from "vue";
 import { PlaylistData } from "@/interfaces/playlistCardInterfaces";
 import ProgressBar from "@/components/Widgets/progressBar.vue";
 import ComponentHelper from "@/helpers/ComponentHelper";
+import { useDisplay } from "vuetify/lib/framework.mjs";
+
+const { xs } = useDisplay();
 
 defineProps({
   playlistData: { type: Object as PropType<PlaylistData>, required: true },
@@ -19,6 +22,9 @@ defineProps({
       <v-card-subtitle class="font-weight-light text-body-1"
         ><span class="font-weight-bold">{{ playlistData.trackCount }}</span> Tracks</v-card-subtitle
       >
+      <v-card-subtitle :class="xs ? 'my-3 font-italic text-h6 genre-text' : 'my-5 font-italic text-h5 genre-text'">{{
+        playlistData.stats?.genreFrequency?.map((genre) => genre.name).join(" • ")
+      }}</v-card-subtitle>
     </v-col>
 
     <v-card-text>
@@ -74,8 +80,10 @@ defineProps({
 </template>
 
 <style scoped>
-.playlist-card-title {
+.playlist-card-title,
+.genre-text {
   max-width: 100%;
+  overflow: visible;
   white-space: pre-wrap;
 }
 .playlist-card {

@@ -21,7 +21,7 @@ const convertArtists = () => {
 
   let artistsString = props.artist![0].name;
   props.artist?.forEach((artist, index) => {
-    if (index != 0) artistsString += ", " + artist;
+    if (index != 0) artistsString += ", " + artist.name;
   });
 
   return artistsString;

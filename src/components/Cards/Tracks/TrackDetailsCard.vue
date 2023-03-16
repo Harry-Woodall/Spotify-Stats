@@ -20,21 +20,17 @@ const convertArtists = () => {
 
   let artistsString = props.artist![0].name;
   props.artist?.forEach((artist, index) => {
-    if (index != 0) artistsString += ", " + artist;
+    if (index != 0) artistsString += ", " + artist.name;
   });
 
   return artistsString;
 };
-
-onMounted(() => {
-  console.log(props.hasBorder);
-});
 </script>
 
 <template>
   <v-card
     elevation="0"
-    :class="xs ? 'mx-3 pb-3 ' + (hasBorder ? 'details-card' : '') : 'mx-15 pb-3 ' + (hasBorder ? 'details-card' : '')"
+    :class="xs ? 'pb-3 ' + (hasBorder ? 'details-card' : '') : 'mx-15 pb-3 ' + (hasBorder ? 'details-card' : '')"
     width="100%"
     :rounded="0"
   >

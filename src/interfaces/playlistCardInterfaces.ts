@@ -105,12 +105,36 @@ export interface PlaylistData {
       artists: DataObject[];
       image: Image;
     };
+    artistFrequency?: ArtistFrequencyObject[];
+    albumFrequency?: AlbumFrequencyObject[];
+    genreFrequency?: FrequencyObject[];
   };
 }
 
 export interface DataObject {
   name: string;
   id: string;
+}
+
+export interface AlbumFrequencyObject {
+  name: string;
+  artists: string[];
+  frequency: number;
+}
+
+export interface ArtistFrequencyObject {
+  artist: {
+    name: string;
+    smallImage?: string;
+    largeImage?: string;
+    id: string;
+  };
+  frequency: number;
+}
+
+export interface FrequencyObject {
+  name: string;
+  frequency: number;
 }
 
 export interface Activity {
