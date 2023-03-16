@@ -7,8 +7,8 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const { xs } = useDisplay();
 
-const props = defineProps({
-  playlistData: { type: Array as PropType<PlaylistData>, required: true },
+defineProps({
+  playlistData: { type: Object as PropType<PlaylistData>, required: true },
 });
 
 const baseHeaderClass = "font-weight-light ";

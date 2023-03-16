@@ -1,15 +1,13 @@
 <script lang="ts" setup>
 import { PropType } from "vue";
 import { PlaylistData } from "@/interfaces/playlistCardInterfaces";
-import TrackCard from "@/components/Cards/Tracks/TrackDetailsCard.vue";
-import ComponentHelper from "@/helpers/ComponentHelper";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 import PlaylistStatCard from "../Cards/PlaylistStatCard.vue";
 
 const { xs } = useDisplay();
 
-const props = defineProps({
-  playlistData: { type: Array as PropType<PlaylistData>, required: true },
+defineProps({
+  playlistData: { type: Object as PropType<PlaylistData>, required: true },
 });
 
 const baseHeaderClass = "font-weight-light ";

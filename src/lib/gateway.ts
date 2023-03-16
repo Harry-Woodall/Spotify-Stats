@@ -4,9 +4,19 @@ import Query from "@/interfaces/gatewayInterfaces";
 const Gateway = {
   getAsync: (token: string, url: string, querys?: Query[], timeout?: number): Promise<Response> | Promise<any> => {
     return fetch(`${AppSettings.baseEndpoint}${url}/?accessToken=${token}${buildQueryString(querys)}`, {
-      // headers: {
-      //   Authorization: `Bearer ${token}`,
-      // },
+      signal: AbortSignal.timeout(timeout || 20000),
+    });
+  },
+  postAsync: (payload: any, url: string, timeout?: number): Promise<Response> | Promise<any> => {
+    console.log(payload);
+
+    return fetch(`${AppSettings.baseEndpoint}${url}`, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(payload),
       signal: AbortSignal.timeout(timeout || 20000),
     });
   },

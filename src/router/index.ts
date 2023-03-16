@@ -48,6 +48,17 @@ const routes = [
     ],
   },
   {
+    path: "/requestAccess",
+    component: () => import("@/layouts/default/Splash.vue"),
+    children: [
+      {
+        path: "",
+        name: "RequestAccess",
+        component: () => import("@/views/RequestAccess.vue"),
+      },
+    ],
+  },
+  {
     path: "/:token(access_token.*)",
     redirect: (to: any) => ({
       path: "/home",

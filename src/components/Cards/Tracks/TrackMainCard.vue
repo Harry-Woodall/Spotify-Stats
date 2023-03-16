@@ -29,32 +29,36 @@ const convertArtists = () => {
 </script>
 
 <template>
-  <v-card :width="xs ? '250px' : '300px'" variant="text" :class="xs ? 'mb-0' : 'mb-5'">
+  <v-card :width="xs ? '135px' : '300px'" variant="text" :class="xs ? 'mb-0' : 'mb-5'">
     <div class="d-flex flex-column justify-center align-center numeric-card-value">
       <v-progress-circular
-        :size="xs ? 150 : 200"
-        :width="xs ? 10 : 15"
+        :size="xs ? 90 : 200"
+        :width="xs ? 5 : 15"
         :model-value="Math.round(parseFloat(value!) * 100)"
         :color="statColor || '#bb86fc'"
-        class="mb-1"
+        :class="xs ? 'mb-0' : 'mb-1'"
       >
-        <v-card-title :class="xs ? 'text-h3 stat-title' : 'text-h2 stat-title'">{{
+        <v-card-title :class="xs ? 'text-h4 stat-title heading-mobile' : 'text-h2 stat-title'">{{
           Math.round(parseFloat(value!) * 100)
         }}</v-card-title>
       </v-progress-circular>
       <v-card-title class="pa-0"
-        ><h2 :class="xs ? 'text-h5' : 'text-h5 font-weight-bold'">
+        ><h2
+          :class="
+            xs ? 'text-h6 mt-1 main-track-card-title heading-mobile' : 'text-h5 font-weight-bold main-track-card-title'
+          "
+        >
           {{ title }}
         </h2></v-card-title
       >
     </div>
 
-    <v-card-item>
-      <v-card elevation="12" :class="xs ? 'mt-0' : 'mt-2'" background="blue">
+    <v-card-item :class="xs ? 'mt-0 pt-0' : ''">
+      <v-card elevation="12" :class="xs ? 'mt-2' : 'mt-2'" background="blue">
         <v-img :src="image" width="100%"></v-img>
       </v-card>
-      <v-card-title class="text-h5 mt-2"> {{ track }} </v-card-title>
-      <v-card-subtitle>{{ convertArtists() }}</v-card-subtitle>
+      <v-card-title :class="xs ? 'text-body-2 mt-2 track-name-mobile' : 'text-h5 mt-2'"> {{ track }} </v-card-title>
+      <v-card-subtitle :class="xs ? 'mt-1' : ''">{{ convertArtists() }}</v-card-subtitle>
     </v-card-item>
   </v-card>
 </template>
@@ -62,6 +66,11 @@ const convertArtists = () => {
 <style scoped>
 .track-card-container {
   width: 100%;
+}
+
+.main-track-card-title,
+.track-name-mobile {
+  line-height: normal;
 }
 .card-value {
   line-height: 4rem;

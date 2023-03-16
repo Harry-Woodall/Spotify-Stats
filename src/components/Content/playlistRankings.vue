@@ -19,7 +19,13 @@ const headerClasses = [baseHeaderClass + "mt-8", baseHeaderClass + "mt-5 text-h4
 </script>
 
 <template>
-  <div class="d-flex flex-wrap my-10 justify-space-around artist-cards-container">
+  <div
+    :class="
+      xs
+        ? 'd-flex flex-wrap my-5 justify-space-around artist-cards-container'
+        : 'd-flex flex-wrap my-10 justify-space-around artist-cards-container'
+    "
+  >
     <h2 :class="xs ? headerClasses[0] : headerClasses[1]">Common artists</h2>
     <ArtistCard v-for="(item, index) in playlistData.stats!.artistFrequency!.slice(0, 5)" :Artist="item" :key="index" />
   </div>

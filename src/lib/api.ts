@@ -48,5 +48,8 @@ const Api = {
       60000
     );
   },
+  async postUserDetails(user: { name: string; email: string }): Promise<Response> {
+    return await Gateway.postAsync(user, `/requestAccess`);
+  },
 };
 export default Api;
