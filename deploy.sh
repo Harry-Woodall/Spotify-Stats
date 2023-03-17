@@ -3,6 +3,7 @@
 set -e
 npm run build
 cd dist
+touch .nojekyll
 git add -A
 git commit -m 'deploy'
 git push -f https://github.com/Harry-Woodall/Spotify-Stats.git master:gh-pages

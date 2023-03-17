@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const router = useRouter();
+const { xs } = useDisplay();
 
 defineProps({
   toggleVisibility: {
@@ -12,7 +14,7 @@ defineProps({
 </script>
 
 <template>
-  <v-app-bar flat>
+  <v-app-bar flat :class="xs ? 'app-bar-mobile' : ''">
     <v-app-bar-title>
       <v-btn variant="text" height="40px" size="small" @click="router.back()">
         <v-icon icon="mdi-arrow-left" size="x-large" />
@@ -23,7 +25,7 @@ defineProps({
 </template>
 
 <style scoped>
-.v-icon {
-  /* font-size: 2rem; */
+.app-bar-mobile {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(255, 255, 255, 0)) !important;
 }
 </style>
