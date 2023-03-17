@@ -100,6 +100,9 @@ const buildChart = () => {
               size: 15,
             },
             callback: function (val, index) {
+              console.log(index);
+
+              console.log(formatTickLabel(getTickLabel(index)));
               if (xs.value) return index % 6 === 0 ? formatTickLabel(getTickLabel(index)) : "";
             },
           },
@@ -144,6 +147,8 @@ const generateData = () => {
   let data = addMissingDates(props.activityData!);
   fullDataSet.value = data;
 
+  console.log(data);
+
   mobileHeight.value = `${data.length * 15}px`;
 
   type dataItem = {
@@ -175,15 +180,15 @@ const addMissingDates = (dates: Activity[]) => {
     let currentDate = new Date(currentYear, currentMonth - 1);
 
     if (previousDate.getTime() == 0) {
-      previousDate = currentDate;
       populatedActivityData.push(item);
+      previousDate = currentDate;
       continue;
     }
 
     let monthDiff =
       currentDate.getMonth() - previousDate.getMonth() + 12 * (currentDate.getFullYear() - previousDate.getFullYear());
 
-    for (let i = 0; i < monthDiff; i++) {
+    for (let i = 0; i < monthDiff - 1; i++) {
       let nextDate = new Date(previousDate.setMonth(previousDate.getMonth() + 1));
       populatedActivityData.push({ date: `${nextDate.getMonth() + 1}-${nextDate.getFullYear()}`, frequency: 0 });
     }
