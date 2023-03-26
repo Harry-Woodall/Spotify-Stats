@@ -28,11 +28,16 @@ const Api = {
     // const me = await Gateway.getAsync(AccessTokenInstance.getToken(), "/me");
     // console.log(me);
   },
-  async getAllPlaylists(offset?: number): Promise<Response> {
+  async getAllPlaylists(offset?: number, clearCache: boolean = false): Promise<Response> {
+    const queries = [];
+
+    if (offset) queries.push({ key: "offset", value: offset.toString() });
+    if (clearCache) queries.push({ key: "cache", value: new Date().getTime().toString() });
+
     return await Gateway.getAsync(
       StorageHelpers.GetAccessToken(),
       "/api/playlists/all",
-      offset ? [{ key: "offset", value: offset.toString() }] : undefined
+      queries.length ? queries : undefined
     );
   },
   async getPlaylistOverview(playlistId: string): Promise<Response> {

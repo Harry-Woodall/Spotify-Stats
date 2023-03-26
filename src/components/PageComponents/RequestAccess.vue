@@ -86,7 +86,7 @@ const submit = async (event: any) => {
         </v-form>
 
         <div v-if="state == FormEnum.SUBMITTING" class="mt-5">
-          <v-progress-circular indeterminate color="purple" :size="50"></v-progress-circular>
+          <v-progress-circular indeterminate color="pink" :size="50"></v-progress-circular>
         </div>
 
         <div v-if="state == FormEnum.SUBMITTED" class="mt-5" siz>

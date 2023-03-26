@@ -3,12 +3,18 @@ import PlaylistCardContainer from "@/components/Containers/PlaylistCardContainer
 import Api from "@/lib/api";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import PlaylistsData from "@/interfaces/playlistDataInterface";
+import { PlaylistsData } from "@/interfaces/playlistDataInterface";
 import ErrorHelper from "@/helpers/ErrorHelper";
 import RouterHelper from "@/helpers/RouterHelper";
+import RefreshButton from "../Widgets/RefreshButton.vue";
 import ValidationHelper from "@/helpers/ValidationHelper";
 import ErrorEnum from "@/enums/ErrorEnum";
+import { getPlaylistOverviewStore, getOverviewIds, clearOverviewData } from "@/state/store";
+import StorageHelpers from "@/helpers/StorageHelper";
+import { useDisplay } from "vuetify/lib/framework.mjs";
+import { PlaylistOverviewEnum } from "@/enums/playlistOverviewEnums";
 
+const { xs } = useDisplay();
 const router = useRouter();
 
 const playlistItems = ref<string[]>([]);
@@ -18,14 +24,31 @@ const nextPlaylists = ref({
   gettingPlaylists: false,
 });
 
+const refreshState = ref<PlaylistOverviewEnum>(PlaylistOverviewEnum.FINNISHED);
+
 onMounted(async () => {
+  loadPage();
+});
+
+const loadPage = async (clearCache: boolean = false) => {
   try {
     await ValidationHelper.validatePage();
 
-    const playlistData = await getPlaylistsData();
+    if (clearCache) {
+      clearOverviewData();
+      StorageHelpers.ClearOverviewData();
+    } else if (getPlaylistOverviewStore().overviewData.length > 0) {
+      playlistItems.value = getOverviewIds();
+      nextPlaylists.value = getPlaylistOverviewStore().nextPlaylists;
+      return;
+    }
+
+    const playlistData = await getPlaylistsData(0, clearCache);
 
     nextPlaylists.value.hasNext = playlistData.nextOffset != null;
     if (playlistData.nextOffset) nextPlaylists.value.nextOffset = playlistData.nextOffset;
+
+    getPlaylistOverviewStore().nextPlaylists = nextPlaylists.value;
 
     playlistItems.value.push(...playlistData.items!);
   } catch (error) {
@@ -33,7 +56,17 @@ onMounted(async () => {
     else if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) router.push("/");
     else router.push(`/error?status=Unknown Error&message=${error}`);
   }
-});
+};
+
+const getPlaylistsData = async (offset?: number, clearCache: boolean = false): Promise<PlaylistsData> => {
+  const playlistDataResponse = await Api.getAllPlaylists(offset, clearCache);
+  if (!playlistDataResponse.ok)
+    throw {
+      respose: playlistDataResponse,
+    };
+
+  return (await playlistDataResponse.json()) as PlaylistsData;
+};
 
 const getMorePlaylists = async () => {
   nextPlaylists.value.gettingPlaylists = true;
@@ -52,14 +85,11 @@ const getMorePlaylists = async () => {
   }
 };
 
-const getPlaylistsData = async (offset?: number): Promise<PlaylistsData> => {
-  const playlistDataResponse = await Api.getAllPlaylists(offset);
-  if (!playlistDataResponse.ok)
-    throw {
-      respose: playlistDataResponse,
-    };
-
-  return (await playlistDataResponse.json()) as PlaylistsData;
+const refreshPlaylists = async () => {
+  refreshState.value = PlaylistOverviewEnum.LOADING;
+  playlistItems.value = [];
+  await loadPage(true);
+  refreshState.value = PlaylistOverviewEnum.FINNISHED;
 };
 
 const handleError = () => {
@@ -68,16 +98,25 @@ const handleError = () => {
 </script>
 
 <template>
-  <v-container class="fill-height">
-    <v-responsive class="d-flex fill-height">
-      <h1>My Playlists</h1>
+  <v-container class="fill-height d-flex justify-center">
+    <v-responsive class="d-flex fill-height justify-center" :max-width="xs ? '100%' : '85%'">
+      <div class="d-flex align-center justify-space-between">
+        <h1>My Playlists</h1>
+        <RefreshButton :onRefresh="refreshPlaylists" :refreshState="refreshState" />
+      </div>
+
       <v-divider class="my-5"></v-divider>
-      <PlaylistCardContainer :items="playlistItems" @error="handleError" />
+
+      <PlaylistCardContainer
+        :items="playlistItems"
+        @error="handleError"
+        @finalized="() => StorageHelpers.StoreOverviewData(getPlaylistOverviewStore())"
+      />
       <div v-if="nextPlaylists.hasNext" class="d-flex justify-center">
         <v-btn v-if="!nextPlaylists.gettingPlaylists" variant="tonal" class="my-8" @click="getMorePlaylists"
           >More playlists...</v-btn
         >
-        <v-progress-circular v-else indeterminate></v-progress-circular>
+        <v-progress-circular v-else class="my-8" indeterminate color="pink"></v-progress-circular>
       </div>
     </v-responsive>
   </v-container>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, onMounted, onUpdated } from "vue";
 import { useRouter } from "vue-router";
 import { PlaylistData } from "@/interfaces/playlistCardInterfaces";
 import ProgressBar from "@/components/Widgets/progressBar.vue";
@@ -31,22 +31,17 @@ onBeforeMount(async () => {
   if (query.id) {
     try {
       const response = await Api.getPlaylistData(query.id as string);
-
       if (!response.ok) {
         if (response.status == 401) {
           await Api.refreshToken();
           router.go(0);
           return;
         }
-
         throw {
           response: response,
         };
       }
-
       const playlistDataResult = await response.json();
-      console.log(playlistDataResult);
-
       playlistDataResult.image = playlistDataResult.images[0].url;
       playlistData.value = playlistDataResult;
 
@@ -85,21 +80,46 @@ onBeforeMount(async () => {
           class="w-100 d-flex justify-center align-center flex-column"
           v-if="pageState == PlaylistDetailsState.SUCCESS"
         >
+          <v-alert
+            v-if="!playlistData.isFullyComplete"
+            :class="xs ? 'text-body-2 pa-2 mb-3' : 'mb-5 text-body-2'"
+            closable
+            color="rgba(0,0,0, 0.75)"
+            max-width="500px"
+            type="warning"
+            title="Large playlist"
+            text="Not all data could be analyzed, results may be inaccurate."
+          >
+          </v-alert>
           <PlaylistHeaderCard :playlistData="playlistData" />
+
           <v-divider :class="xs ? 'my-10' : 'my-15'"></v-divider>
+
           <PlaylistMainDetails :playlistData="playlistData" />
           <PlaylistRankings :playlistData="playlistData" />
-
           <PlaylistStats :playlistData="playlistData" />
           <TrackStats :playlistData="playlistData" />
+
+          <v-divider :class="xs ? 'my-8' : 'my-15'"></v-divider>
+
           <activityChart
             v-if="playlistData.stats!.activity!.length > 3"
             :activity-data="playlistData.stats!.activity"
           />
         </div>
 
-        <div v-else-if="pageState == PlaylistDetailsState.LOADING">
-          <v-progress-circular :size="70" :width="7" color="purple" indeterminate></v-progress-circular>
+        <div
+          v-else-if="pageState == PlaylistDetailsState.LOADING"
+          class="d-flex flex-column align-center justify-center"
+        >
+          <v-progress-circular
+            :size="xs ? 70 : 150"
+            :width="xs ? 7 : 15"
+            color="pink"
+            indeterminate
+            class="mb-5"
+          ></v-progress-circular>
+          <h1 :class="xs ? 'text-h6' : 'text-h4'">Gathering Data...</h1>
         </div>
 
         <v-sheet
@@ -120,3 +140,5 @@ onBeforeMount(async () => {
     </v-responsive>
   </v-container>
 </template>
+
+<style scoped></style>

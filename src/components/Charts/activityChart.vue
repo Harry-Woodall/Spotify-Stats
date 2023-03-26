@@ -100,9 +100,6 @@ const buildChart = () => {
               size: 15,
             },
             callback: function (val, index) {
-              console.log(index);
-
-              console.log(formatTickLabel(getTickLabel(index)));
               if (xs.value) return index % 6 === 0 ? formatTickLabel(getTickLabel(index)) : "";
             },
           },
@@ -146,9 +143,6 @@ const buildChart = () => {
 const generateData = () => {
   let data = addMissingDates(props.activityData!);
   fullDataSet.value = data;
-
-  console.log(data);
-
   mobileHeight.value = `${data.length * 15}px`;
 
   type dataItem = {
@@ -203,9 +197,11 @@ const addMissingDates = (dates: Activity[]) => {
 </script>
 
 <template>
-  <v-sheet class="pa-5 mt-15" rounded color="rgba(0,0,0,0.5)" width="100%">
-    <h2>Playlist activity</h2>
-    <p class="text-subtitle-2 sub-heading mb-10">How often songs are added to this playlist</p>
+  <v-sheet class="pa-5 chart-container" rounded color="rgba(0,0,0,0.5)" width="100%">
+    <h2 :class="xs ? '' : 'text-h3 ml-3 font-weight-light'">Playlist activity</h2>
+    <p :class="xs ? 'text-subtitle-2 sub-heading mb-10 ml-2' : 'text-subtitle-2 sub-heading mb-10 mt-2 ml-5'">
+      How often songs are added to this playlist
+    </p>
     <div v-if="xs" v-resize="onResize" class="activity-chart-container" :style="'height: ' + mobileHeight">
       <canvas id="activity-chart"></canvas>
     </div>
@@ -214,6 +210,9 @@ const addMissingDates = (dates: Activity[]) => {
 </template>
 
 <style scoped>
+.chart-container {
+  max-width: 1500px;
+}
 .sub-heading {
   color: rgba(255, 255, 255, 0.6);
 }

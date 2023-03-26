@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, PropType, reactive, ref } from "vue";
 import Api from "@/lib/api";
 import PlaceholderPlaylistOverviewCard from "@/components/Cards/PlaylistOverviewCard/PlaceholderPlaylistOverviewCard.vue";
 import PlaylistOverviewCardContent from "@/components/Cards/PlaylistOverviewCard/PlaylistOverviewCardContent.vue";
@@ -7,20 +7,32 @@ import { PlaylistOverview } from "@/interfaces/playlistCardInterfaces";
 import ErrorHelper from "@/helpers/ErrorHelper";
 import ErrorEnum from "@/enums/ErrorEnum";
 import Masonry from "masonry-layout";
+import { addOverviewData, getOverviewData } from "@/state/store";
 
 const props = defineProps({
   playlistId: {
     type: String,
     required: true,
   },
+  index: {
+    type: Number,
+    required: true,
+  },
 });
 
-const emit = defineEmits(["error"]);
+const emit = defineEmits(["error", "success"]);
 
-const playlistData = reactive<PlaylistOverview>({});
+const playlistData = ref<PlaylistOverview>({ id: props.playlistId });
 const errorType = ref<ErrorEnum>(ErrorEnum.NONE);
 
 onMounted(async () => {
+  const overviewData = getOverviewData(props.playlistId);
+  if (overviewData) {
+    playlistData.value = overviewData;
+    emit("success");
+    return;
+  }
+
   try {
     const response = await Api.getPlaylistOverview(props.playlistId);
 
@@ -31,13 +43,15 @@ onMounted(async () => {
 
     const playlistOverview = await response.json();
 
-    playlistData.id = props.playlistId;
-    playlistData.title = playlistOverview.name;
-    playlistData.trackCount = playlistOverview.trackCount;
-    playlistData.owner = playlistOverview.owner;
+    playlistData.value.title = playlistOverview.name;
+    playlistData.value.trackCount = playlistOverview.trackCount;
+    playlistData.value.owner = playlistOverview.owner;
 
-    if (playlistOverview.images.length) playlistData.image = playlistOverview.images[0].url;
-    else playlistData.image = "images/ImagePlaceholder.svg";
+    if (playlistOverview.images.length) playlistData.value.image = playlistOverview.images[0].url;
+    else playlistData.value.image = "images/ImagePlaceholder.svg";
+
+    addOverviewData(playlistData.value, props.index);
+    emit("success");
   } catch (error) {
     errorType.value = ErrorEnum.UNKNOWN;
 

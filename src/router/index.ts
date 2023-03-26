@@ -70,6 +70,24 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(process.env.BASE_URL),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (to.path == "/home") {
+      return new Promise((resolve, reject) => {
+        if (savedPosition) {
+          const resizeObserver = new ResizeObserver((entries) => {
+            if (entries[0].target.clientHeight >= savedPosition.top + screen.height) {
+              resolve(savedPosition);
+              resizeObserver.disconnect();
+            }
+          });
+
+          resizeObserver.observe(document.body);
+        } else {
+          resolve({ top: 0 });
+        }
+      });
+    }
+  },
 });
 
 router.beforeEach(async (to) => {

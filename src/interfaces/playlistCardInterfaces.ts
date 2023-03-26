@@ -3,6 +3,7 @@ export interface PlaylistData {
   name?: string;
   image?: string;
   trackCount?: number;
+  isFullyComplete?: boolean;
   stats?: {
     analysis?: Analysis;
     activity?: {
@@ -149,11 +150,16 @@ interface Image {
 }
 
 export interface PlaylistOverview {
-  id?: string;
+  id: string;
   title?: string;
   image?: string;
   owner?: string;
   trackCount?: number;
+}
+
+export interface PlaylistOverviewWrapper {
+  data: PlaylistOverview;
+  index: number;
 }
 
 export interface Analysis {
