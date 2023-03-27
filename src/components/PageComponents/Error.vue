@@ -3,6 +3,7 @@ import StorageHelpers from "@/helpers/StorageHelper";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import RateLimit from "../Errors/Content/RateLimit.vue";
 import Unauthorized from "../Errors/Content/Unauthorized.vue";
 
 const router = useRouter();
@@ -12,6 +13,11 @@ const backToLogin = () => {
   router.removeRoute(router.currentRoute.value.name!);
   StorageHelpers.DestroyLocalStorage();
   router.push("/");
+};
+
+const backToPreviousPage = () => {
+  router.removeRoute(router.currentRoute.value.name!);
+  router.back();
 };
 
 onMounted(() => {
@@ -31,8 +37,17 @@ onMounted(() => {
         </p>
 
         <Unauthorized v-if="router.currentRoute.value.query.status == '403'" />
+        <RateLimit v-if="router.currentRoute.value.query.status == '429'" />
 
-        <v-btn variant="tonal" class="mt-10" @click="backToLogin">Back to login</v-btn>
+        <v-btn
+          v-if="router.currentRoute.value.query.status != '429'"
+          variant="tonal"
+          class="mt-10"
+          @click="backToLogin"
+        >
+          Back to login
+        </v-btn>
+        <v-btn v-else variant="tonal" class="mt-10" @click="backToPreviousPage">Try again</v-btn>
       </v-sheet>
     </v-responsive>
   </v-container>

@@ -4,7 +4,7 @@ import Query from "@/interfaces/gatewayInterfaces";
 const Gateway = {
   getAsync: (token: string, url: string, querys?: Query[], timeout?: number): Promise<Response> | Promise<any> => {
     return fetch(`${AppSettings.baseEndpoint}${url}/?accessToken=${token}${buildQueryString(querys)}`, {
-      signal: AbortSignal.timeout(timeout || 20000),
+      signal: AbortSignal.timeout(timeout || 30000),
     });
   },
   postAsync: (payload: any, url: string, timeout?: number): Promise<Response> | Promise<any> => {
