@@ -10,7 +10,13 @@ const toggleLoading = (value: boolean) => {
 </script>
 
 <template>
-  <v-progress-linear v-if="showLoading" indeterminate color="pink" class="loading-bar"></v-progress-linear>
+  <v-progress-linear
+    absolute
+    :active="showLoading"
+    :indeterminate="showLoading"
+    color="pink"
+    class="loading-bar"
+  ></v-progress-linear>
   <Home @is-validating="toggleLoading" />
 </template>
 
