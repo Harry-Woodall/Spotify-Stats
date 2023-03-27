@@ -1,13 +1,14 @@
 import { Router } from "vue-router";
-import StorageHelpers from "./StorageHelper";
+import StorageHelpers from "@/Helpers/StorageHelper";
+import Api from "@/lib/api";
 
 const RouterHelper = {
-  HandleErrorResponse(router: Router, response: Response) {
+  HandleErrorResponse(router: Router, response: Response, tokenRefreshCallback: Function) {
     switch (response.status) {
       case 400:
       case 401:
-        StorageHelpers.DestroyLocalStorage();
-        router.push("/");
+        Api.refreshToken();
+        tokenRefreshCallback();
         break;
       default:
         router.push(`/error?status=${response.status}&message=${response.statusText}`);

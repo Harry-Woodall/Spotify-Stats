@@ -2,7 +2,7 @@
 import PlaylistCardContainer from "@/components/Containers/PlaylistCardContainer.vue";
 import Api from "@/lib/api";
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { Router, useRouter } from "vue-router";
 import { PlaylistsData } from "@/interfaces/playlistDataInterface";
 import ErrorHelper from "@/helpers/ErrorHelper";
 import RouterHelper from "@/helpers/RouterHelper";
@@ -58,9 +58,8 @@ const loadPage = async (clearCache: boolean = false) => {
 
     playlistItems.value.push(...playlistData.items!);
   } catch (error) {
-    if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response);
-    else if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) router.push("/");
-    else router.push(`/error?status=Unknown Error&message=${error}`);
+    console.log(error);
+    handleRequestError(error, router, getMorePlaylists);
   }
 };
 
@@ -68,7 +67,7 @@ const getPlaylistsData = async (offset?: number, clearCache: boolean = false): P
   const playlistDataResponse = await Api.getAllPlaylists(offset, clearCache);
   if (!playlistDataResponse.ok)
     throw {
-      respose: playlistDataResponse,
+      response: playlistDataResponse,
     };
 
   return (await playlistDataResponse.json()) as PlaylistsData;
@@ -86,8 +85,10 @@ const getMorePlaylists = async () => {
 
     nextPlaylists.value.gettingPlaylists = false;
   } catch (error) {
-    if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response);
-    else router.push(`/error?status=Unknown Error&message=${error}`);
+    console.log(error);
+
+    nextPlaylists.value.gettingPlaylists = false;
+    handleRequestError(error, router, getMorePlaylists);
   }
 };
 
@@ -98,7 +99,14 @@ const refreshPlaylists = async () => {
   refreshState.value = PlaylistOverviewEnum.FINNISHED;
 };
 
-const handleError = () => {
+const handleRequestError = (error: any, router: Router, tokenRefreshCallback: Function) => {
+  if (ErrorHelper.isResponseError(error))
+    RouterHelper.HandleErrorResponse(router, error.response, tokenRefreshCallback);
+  else if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) router.push("/");
+  else router.push(`/error?status=Unknown Error&message=${error}`);
+};
+
+const handleCardContainerError = () => {
   router.push(`/error?message=Failed to load playlists`);
 };
 </script>
@@ -115,7 +123,7 @@ const handleError = () => {
 
       <PlaylistCardContainer
         :items="playlistItems"
-        @error="handleError"
+        @error="handleCardContainerError"
         @finalized="() => StorageHelpers.StoreOverviewData(getPlaylistOverviewStore())"
       />
       <div v-if="nextPlaylists.hasNext" class="d-flex justify-center">
