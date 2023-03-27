@@ -8,8 +8,6 @@ const Gateway = {
     });
   },
   postAsync: (payload: any, url: string, timeout?: number): Promise<Response> | Promise<any> => {
-    console.log(payload);
-
     return fetch(`${AppSettings.baseEndpoint}${url}`, {
       headers: {
         Accept: "application/json",

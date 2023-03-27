@@ -58,7 +58,6 @@ const loadPage = async (clearCache: boolean = false) => {
 
     playlistItems.value.push(...playlistData.items!);
   } catch (error) {
-    console.log(error);
     handleRequestError(error, router, getMorePlaylists);
   }
 };
@@ -85,8 +84,6 @@ const getMorePlaylists = async () => {
 
     nextPlaylists.value.gettingPlaylists = false;
   } catch (error) {
-    console.log(error);
-
     nextPlaylists.value.gettingPlaylists = false;
     handleRequestError(error, router, getMorePlaylists);
   }

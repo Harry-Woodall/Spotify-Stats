@@ -14,7 +14,6 @@ import NavigationDraw from "../navigation/NavigationDraw.vue";
 const drawVisible = reactive({ value: false });
 
 const updateVisibility = (val: boolean) => {
-  console.log("Value: ", val);
   drawVisible.value = val;
 };
 

@@ -65,7 +65,6 @@ const StorageHelpers = {
 
     if (new Date().getTime() > storageWrapper.cacheTime) return null;
 
-    console.log("grabbing from session storage");
     return storageWrapper.overviewStorageData;
   },
 

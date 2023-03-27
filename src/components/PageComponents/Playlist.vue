@@ -43,8 +43,6 @@ const populatePlaylistData = async () => {
 
       pageState.value = PlaylistDetailsState.SUCCESS;
     } catch (error) {
-      console.log("throwing error ", error);
-
       handleErrors(error, router);
     }
   }

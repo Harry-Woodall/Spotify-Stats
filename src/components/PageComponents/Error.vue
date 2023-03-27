@@ -19,10 +19,6 @@ const backToPreviousPage = () => {
   router.removeRoute(router.currentRoute.value.name!);
   router.back();
 };
-
-onMounted(() => {
-  console.log("sdasd");
-});
 </script>
 
 <template>

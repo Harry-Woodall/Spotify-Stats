@@ -6,12 +6,8 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const { xs } = useDisplay();
 
-const props = defineProps({
+defineProps({
   playlistData: { type: Object as PropType<PlaylistData>, required: true },
-});
-
-onMounted(() => {
-  console.log(props.playlistData.stats?.earliestTrack);
 });
 
 const baseHeaderClass = "font-weight-light mb-5 ";
