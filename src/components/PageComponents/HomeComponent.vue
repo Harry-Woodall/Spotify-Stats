@@ -17,6 +17,10 @@ import { PlaylistOverviewEnum } from "@/enums/playlistOverviewEnums";
 const { xs } = useDisplay();
 const router = useRouter();
 
+const emit = defineEmits<{
+  (e: "isValidating", value: boolean): void;
+}>();
+
 const playlistItems = ref<string[]>([]);
 const nextPlaylists = ref({
   hasNext: false,
@@ -32,7 +36,9 @@ onMounted(async () => {
 
 const loadPage = async (clearCache: boolean = false) => {
   try {
+    emit("isValidating", true);
     await ValidationHelper.validatePage();
+    emit("isValidating", false);
 
     if (clearCache) {
       clearOverviewData();
