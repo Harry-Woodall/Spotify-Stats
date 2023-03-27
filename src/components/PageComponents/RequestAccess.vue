@@ -57,7 +57,7 @@ const submit = async (event: any) => {
 
       state.value = FormEnum.SUBMITTED;
     } catch (error) {
-      if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response);
+      if (ErrorHelper.isResponseError(error)) RouterHelper.HandleErrorResponse(router, error.response, submit);
       else if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) router.push("/");
       else router.push(`/error?status=Unknown Error&message=${error}`);
     }

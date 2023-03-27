@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { onBeforeMount, ref, onMounted, onUpdated } from "vue";
-import { useRouter } from "vue-router";
+import { Router, useRouter } from "vue-router";
 import { PlaylistData } from "@/interfaces/playlistCardInterfaces";
 import ProgressBar from "@/components/Widgets/progressBar.vue";
 import Api from "@/lib/api";
@@ -25,51 +25,53 @@ const pageState = ref<PlaylistDetailsState>(PlaylistDetailsState.LOADING);
 const errorType = ref<ErrorEnum>(ErrorEnum.NONE);
 
 onBeforeMount(async () => {
+  await populatePlaylistData();
+});
+
+const populatePlaylistData = async () => {
   const query = router.currentRoute.value.query;
   playlistId.value = query.id as string;
 
   if (query.id) {
     try {
       const response = await Api.getPlaylistData(query.id as string);
-      if (!response.ok) {
-        if (response.status == 401) {
-          await Api.refreshToken();
-          router.go(0);
-          return;
-        }
-        throw {
-          response: response,
-        };
-      }
+      if (!response.ok) throw { response: response };
+
       const playlistDataResult = await response.json();
       playlistDataResult.image = playlistDataResult.images[0].url;
       playlistData.value = playlistDataResult;
 
       pageState.value = PlaylistDetailsState.SUCCESS;
     } catch (error) {
-      if (ErrorHelper.isResponseError(error)) {
-        if (error.response.status == 404) {
-          pageState.value = PlaylistDetailsState.ERROR;
-          errorType.value = ErrorEnum.MISSING_TRACK_IDS;
-        } else RouterHelper.HandleErrorResponse(router, error.response);
-        return;
-      }
+      console.log("throwing error ", error);
 
-      if (ErrorHelper.isAbortError(error)) {
-        pageState.value = PlaylistDetailsState.ERROR;
-        errorType.value = ErrorEnum.TIMEOUT;
-        return;
-      }
-
-      if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) {
-        router.push("/");
-        return;
-      }
-
-      router.push(`/error?status=Unknown Error&message=${error}`);
+      handleErrors(error, router);
     }
   }
-});
+};
+
+const handleErrors = (error: any, router: Router) => {
+  if (ErrorHelper.isResponseError(error)) {
+    if (error.response.status == 404) {
+      pageState.value = PlaylistDetailsState.ERROR;
+      errorType.value = ErrorEnum.MISSING_TRACK_IDS;
+    } else RouterHelper.HandleErrorResponse(router, error.response, populatePlaylistData);
+    return;
+  }
+
+  if (ErrorHelper.isAbortError(error)) {
+    pageState.value = PlaylistDetailsState.ERROR;
+    errorType.value = ErrorEnum.TIMEOUT;
+    return;
+  }
+
+  if (ErrorHelper.isGenericError(error) && error.message == ErrorEnum.NO_TOKEN) {
+    router.push("/");
+    return;
+  }
+
+  router.push(`/error?status=Unknown Error&message=${error}`);
+};
 </script>
 
 <template>
