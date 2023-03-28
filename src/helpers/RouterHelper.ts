@@ -16,6 +16,7 @@ const RouterHelper = {
           await Api.refreshToken();
         } catch (error) {
           StorageHelpers.DestroyLocalStorage();
+          StorageHelpers.DestroySessionStorage();
           router.push(`/`);
         }
 

@@ -86,7 +86,7 @@ const router = createRouter({
           resolve({ top: 0 });
         }
       });
-    }
+    } else return { top: 0 };
   },
 });
 

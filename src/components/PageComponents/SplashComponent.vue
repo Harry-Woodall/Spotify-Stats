@@ -37,9 +37,11 @@ onBeforeMount(async () => {
     }
 
     StorageHelpers.DestroyLocalStorage();
+    StorageHelpers.DestroySessionStorage();
   } catch (error) {
     currentState.value = LoginEnum.INVALID_TOKEN;
     StorageHelpers.DestroyLocalStorage();
+    StorageHelpers.DestroySessionStorage();
   }
 });
 </script>

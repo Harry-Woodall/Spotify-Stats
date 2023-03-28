@@ -1,6 +1,5 @@
 import localStorageEnums from "@/enums/LocalStorageEnums";
 import ErrorEnum from "@/enums/ErrorEnum";
-import { PlaylistOverview } from "@/interfaces/playlistCardInterfaces";
 import { PlaylistOverviewStoreData } from "@/interfaces/playlistDataInterface";
 import { PlaylistsOverviewStorageWrapper } from "@/interfaces/storageInterfaces";
 
@@ -8,6 +7,9 @@ const StorageHelpers = {
   DestroyLocalStorage() {
     localStorage.removeItem(localStorageEnums.ACCESS_TOKEN);
     localStorage.removeItem(localStorageEnums.REFRESH_TOKEN);
+  },
+  DestroySessionStorage() {
+    sessionStorage.removeItem(localStorageEnums.OVERVIEW_DATA);
   },
   TokenExists() {
     return (
