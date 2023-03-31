@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import PlaylistCardContainer from "@/components/Containers/PlaylistCardContainer.vue";
+import CurrentTrack from "@/components/Banners/CurrentTrack.vue";
 import Api from "@/lib/api";
 import { onMounted, ref } from "vue";
 import { Router, useRouter } from "vue-router";
@@ -110,7 +111,7 @@ const handleCardContainerError = () => {
 
 <template>
   <v-container class="fill-height d-flex justify-center">
-    <v-responsive class="d-flex fill-height justify-center" :max-width="xs ? '100%' : '85%'">
+    <v-responsive class="d-flex fill-height justify-center mb-3" :max-width="xs ? '100%' : '85%'">
       <div class="d-flex align-center justify-space-between">
         <h1>My Playlists</h1>
         <RefreshButton :onRefresh="refreshPlaylists" :refreshState="refreshState" />
@@ -130,5 +131,6 @@ const handleCardContainerError = () => {
         <v-progress-circular v-else class="my-8" indeterminate color="pink"></v-progress-circular>
       </div>
     </v-responsive>
+    <CurrentTrack />
   </v-container>
 </template>
