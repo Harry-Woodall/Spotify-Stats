@@ -75,7 +75,7 @@ const baseColor = [255, 23, 170];
       </div>
       <div class="mb-3">
         <ProgressBar
-          :ammount="0.95"
+          :ammount="trackData!.analysis!.vocals"
           :id="'-vocals'"
           label="Vocals"
           :range="[1, 0]"

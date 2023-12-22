@@ -171,7 +171,7 @@ const goToPlaylist = (id: string) => {
       </v-banner>
     </v-scroll-y-transition>
   </v-container>
-  <v-dialog v-model="dialog" width="75%" max-width="400px" rounded elevation="0">
+  <v-dialog v-model="dialog" width="75%" max-width="400px" rounded :elevation="10" scrim="#000000">
     <current-track-dialog :closeDialog="closeDialog" :track-data="trackData" :linkToPlaylist="goToPlaylist" />
   </v-dialog>
 </template>

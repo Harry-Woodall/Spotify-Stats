@@ -29,6 +29,7 @@ onBeforeMount(async () => {
 });
 
 const populatePlaylistData = async () => {
+  console.log("doing stuff");
   const query = router.currentRoute.value.query;
   playlistId.value = query.id as string;
 
@@ -38,6 +39,8 @@ const populatePlaylistData = async () => {
       if (!response.ok) throw { response: response };
 
       const playlistDataResult = await response.json();
+      console.log(playlistDataResult);
+
       playlistDataResult.image = playlistDataResult.images[0].url;
       playlistData.value = playlistDataResult;
 

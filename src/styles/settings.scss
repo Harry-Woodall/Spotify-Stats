@@ -9,6 +9,8 @@
 //   $color-pack: false
 // );
 
+$dialog-elevation: 35;
+
 html {
   overflow-y: auto !important;
 }
@@ -42,9 +44,14 @@ body {
 }
 
 .v-overlay__content {
-  background: #583892;
-  border: 3px solid white;
-  border-radius: 20px;
+  background: rgb(25, 15, 205);
+  background: linear-gradient(25deg, rgba(25, 15, 205, 1) 0%, rgba(103, 51, 234, 1) 55%, rgb(190, 57, 192) 100%);
+
+  border-radius: 10px;
+}
+
+.v-overlay__scrim {
+  opacity: 70%;
 }
 
 .v-card {
