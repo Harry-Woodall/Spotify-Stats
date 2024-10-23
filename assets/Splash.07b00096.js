@@ -1,1 +1,0 @@
-import{V as a,_ as e}from"./VApp.a86f3d0f.js";import{d as t,c as o,w as s,o as r,a as p}from"./index.f57cb293.js";import"./tag.d79ffabb.js";const l=t({__name:"Splash",setup(_){return(c,n)=>(r(),o(a,null,{default:s(()=>[p(e)]),_:1}))}});export{l as default};
